@@ -1,0 +1,464 @@
+/*Se você está trabalhando com o **Spring Boot (Spring MVC / Spring Data JPA)**, a estrutura muda um pouco para focar na persistência em banco de dados relacional.
+
+Em vez de listas simples na memória, usamos **Anotações do JPA** (`@Entity`, `@OneToMany`, `@ManyToOne`, `@ManyToMany`, `@OneToOne`) e o Spring cuida de criar as tabelas e gerenciar essas chaves estrangeiras automaticamente.
+
+Aqui está o mapeamento completo do seu diagrama convertido em **Entidades do Spring JPA (Model)**, prontas para rodar na sua aplicação.
+
+---
+
+### 1. Pacote `usuarios`
+
+#### `Usuario.java` (Herança com `@Inheritance`)
+
+> No Spring JPA, usamos `@Inheritance(strategy = InheritanceType.JOINED)` para herança. O banco de dados criará tabelas separadas para Aluno e Administrador, conectando-as pelo ID do Usuário.
+
+```java
+package br.com.sistema.model.usuarios;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "usuarios")
+@Inheritance(strategy = InheritanceType.JOINED) // Estrutura de herança no BD
+public abstract class Usuario {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
+
+    @Column(nullable = false, unique = true)
+    protected String email;
+
+    @Column(nullable = false)
+    protected String senha;
+
+    @Temporal(TemporalType.DATE)
+    protected Date dataCadastro;
+
+    protected String statusDisponibilidade;
+    protected String localizacaoDeVenda;
+
+    // Getters, Setters, Construtores...
+}
+
+```
+
+#### `Aluno.java`
+
+```java
+package br.com.sistema.model.usuarios;
+
+import br.com.sistema.model.comercial.Arrecadacao;
+import br.com.sistema.model.comercial.Pedido;
+import br.com.sistema.model.interacoes.Avaliacao;
+import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "alunos")
+@PrimaryKeyJoinColumn(name = "usuario_id") // ID que herda de Usuario
+public class Aluno extends Usuario {
+
+    private String curso;
+    private String contato;
+    private String turma;
+
+    // Aluno 1 -> 0..* Pedido (mappedBy aponta para o atributo 'cliente' em Pedido)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos = new ArrayList<>();
+
+    // Aluno 1 -> 0..* Avaliação
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
+
+    // Aluno 0..* <-> 0..* Arrecadação (Muitos para Muitos precisa de uma tabela intermediária)
+    @ManyToMany(mappedBy = "alunosParticipantes")
+    private List<Arrecadacao> campanhas = new ArrayList<>();
+
+    // Métodos de negócio...
+}
+
+```
+
+#### `Administrador.java`
+
+```java
+package br.com.sistema.model.usuarios;
+
+import br.com.sistema.model.interacoes.Denuncia;
+import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "administradores")
+@PrimaryKeyJoinColumn(name = "usuario_id")
+public class Administrador extends Usuario {
+
+    // Administrador 1 -> 0..* Denuncia
+    @OneToMany(mappedBy = "administradorResponsavel", cascade = CascadeType.ALL)
+    private List<Denuncia> denunciasSobResponsabilidade = new ArrayList<>();
+
+    // Métodos de negócio...
+}
+
+```
+
+---
+
+### 2. Pacote `anuncios`
+
+#### `Anuncio.java`
+
+```java
+package br.com.sistema.model.anuncios;
+
+import br.com.sistema.model.interacoes.Denuncia;
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "anuncios")
+public class Anuncio {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+    
+    @Column(columnDefinition = "TEXT")
+    private String descricao;
+    
+    private float preco;
+    private String fotoUrl;
+    private String category;
+
+    @Temporal(TemporalType.DATE)
+    private Date dataPublicacao;
+
+    private String status;
+    private int quantidadeDenuncias;
+
+    // Anuncio 1 -> 0..* Denuncia
+    @OneToMany(mappedBy = "anuncioDenunciado", cascade = CascadeType.ALL)
+    private List<Denuncia> denuncias = new ArrayList<>();
+
+    // Métodos de negócio...
+}
+
+```
+
+---
+
+### 3. Pacote `comercial`
+
+#### `Pedido.java`
+
+```java
+package br.com.sistema.model.comercial;
+
+import br.com.sistema.model.usuarios.Aluno;
+import br.com.sistema.model.anuncios.Anuncio;
+import br.com.sistema.model.financeiro.Pagamento;
+import br.com.sistema.model.interacoes.MensagemChat;
+import br.com.sistema.model.interacoes.Avaliacao;
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "pedidos")
+public class Pedido {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataPedido;
+
+    private String statusPedido;
+    private String horarioEntregaAgendado;
+
+    @Temporal(TemporalType.DATE)
+    private Date dataEntregaAgendada;
+
+    // Pedido * -> 1 Aluno (Muitos pedidos para 1 Aluno)
+    @ManyToOne
+    @JoinColumn(name = "aluno_id", nullable = false)
+    private Aluno cliente;
+
+    // Pedido * -> 1 Anuncio
+    @ManyToOne
+    @JoinColumn(name = "anuncio_id", nullable = false)
+    private Anuncio anuncio;
+
+    // Pedido 1 -> 0..* MensagemChat
+    @OneToMany(mappedBy = "pedidoContexto", cascade = CascadeType.ALL)
+    private List<MensagemChat> chat = new ArrayList<>();
+
+    // Pedido 1 -> 0..* Pagamento
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    private List<Pagamento> pagamentos = new ArrayList<>();
+
+    // Pedido 1 -> 0..* Avaliacao
+    @OneToMany(mappedBy = "pedidoOrigem", cascade = CascadeType.ALL)
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
+
+    // Métodos de negócio...
+}
+
+```
+
+#### `Arrecadacao.java`
+
+```java
+package br.com.sistema.model.comercial;
+
+import br.com.sistema.model.usuarios.Aluno;
+import br.com.sistema.model.interacoes.Avaliacao;
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "arrecadacoes")
+public class Arrecadacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nomeTurma;
+    private String descricao;
+    private float objetivoFinanceiro;
+    private float valorArrecadado;
+
+    @Temporal(TemporalType.DATE)
+    private Date dataLimite;
+
+    // Arrecadação 0..* <-> 0..* Aluno (Criando a tabela de junção automática no BD)
+    @ManyToMany
+    @JoinTable(
+        name = "aluno_arrecadacao",
+        joinColumns = @JoinColumn(name = "arrecadacao_id"),
+        inverseJoinColumns = @JoinColumn(name = "aluno_id")
+    )
+    private List<Aluno> alunosParticipantes = new ArrayList<>();
+
+    // Arrecadação 0..1 -> 0..* Avaliação
+    @OneToMany(mappedBy = "arrecadacaoReferente")
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
+
+    // Métodos de negócio...
+}
+
+```
+
+---
+
+### 4. Pacote `interacoes`
+
+#### `Denuncia.java`
+
+```java
+package br.com.sistema.model.interacoes;
+
+import br.com.sistema.model.usuarios.Administrador;
+import br.com.sistema.model.anuncios.Anuncio;
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "denuncias")
+public class Denuncia {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String motivo;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataDenuncia;
+
+    // Denuncia * -> 1 Administrador
+    @ManyToOne
+    @JoinColumn(name = "administrador_id")
+    private Administrador administradorResponsavel;
+
+    // Denuncia * -> 1 Anuncio
+    @ManyToOne
+    @JoinColumn(name = "anuncio_id", nullable = false)
+    private Anuncio anuncioDenunciado;
+
+    // Métodos de negócio...
+}
+
+```
+
+#### `Avaliacao.java`
+
+```java
+package br.com.sistema.model.interacoes;
+
+import br.com.sistema.model.usuarios.Aluno;
+import br.com.sistema.model.comercial.Pedido;
+import br.com.sistema.model.comercial.Arrecadacao;
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "avaliacoes")
+public class Avaliacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private int nota;
+    private String comentario;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataAvaliacao;
+
+    // Avaliacao * -> 1 Aluno
+    @ManyToOne
+    @JoinColumn(name = "aluno_id", nullable = false)
+    private Aluno autor;
+
+    // Avaliacao * -> 1 Pedido
+    @ManyToOne
+    @JoinColumn(name = "pedido_id", nullable = false)
+    private Pedido pedidoOrigem;
+
+    // Avaliacao 0..* -> 0..1 Arrecadação
+    @ManyToOne
+    @JoinColumn(name = "arrecadacao_id")
+    private Arrecadacao arrecadacaoReferente;
+
+    // Avaliacao 0..1 -> 0..* Notificação
+    @OneToMany(mappedBy = "avaliacaoGeradora")
+    private List<Notificacao> notificacoes = new ArrayList<>();
+
+    // Métodos de negócio...
+}
+
+```
+
+#### `MensagemChat.java`
+
+```java
+package br.com.sistema.model.interacoes;
+
+import br.com.sistema.model.comercial.Pedido;
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+@Entity
+@Table(name = "mensagens_chat")
+public class MensagemChat {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(columnDefinition = "TEXT")
+    private String conteudo;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date horarioDeEnvio;
+
+    private int enviadoPor; // Guarda o id do remetente
+
+    // MensagemChat * -> 1 Pedido
+    @ManyToOne
+    @JoinColumn(name = "pedido_id", nullable = false)
+    private Pedido pedidoContexto;
+
+    // MensagemChat 0..1 -> 0..* Notificação
+    @OneToMany(mappedBy = "mensagemGeradora")
+    private List<Notificacao> notificacoes = new ArrayList<>();
+}
+
+```
+
+#### `Notificacao.java`
+
+```java
+package br.com.sistema.model.interacoes;
+
+import jakarta.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "notificacoes")
+public class Notificacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String titulo;
+    private String conteudo;
+    private boolean lida;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataEnvio;
+
+    // Notificação * -> 0..1 Avaliação
+    @ManyToOne
+    @JoinColumn(name = "avaliacao_id")
+    private Avaliacao avaliacaoGeradora;
+
+    // Notificação * -> 0..1 MensagemChat
+    @ManyToOne
+    @JoinColumn(name = "mensagem_chat_id")
+    private MensagemChat mensagemGeradora;
+}
+
+```
+
+---
+
+### 5. Pacote `financeiro`
+
+#### `Pagamento.java`
+
+```java
+package br.com.sistema.model.financeiro;
+
+import br.com.sistema.model.comercial.Pedido;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "pagamentos")
+public class Pagamento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private float valorTotal;
+    private String statusPagamento;
+    private float gorjetaBonus;
+    private String tipoPagamento;
+
+    // Pagamento * -> 1 Pedido
+    @ManyToOne
+    @JoinColumn(name = "pedido_id", nullable = false)
+    private Pedido pedido;
+}
+
+```*/
