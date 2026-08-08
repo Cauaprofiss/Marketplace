@@ -1,0 +1,616 @@
+/* ============================================================
+   CAMPUS MARKETPLACE — Design system
+   Conceito: mural de avisos / classificados de campus
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+    --ink:        #1B2430;
+    --ink-soft:   #3A4657;
+    --paper:      #EFEBDE;
+    --paper-dim:  #E4DFCD;
+    --card:       #FBF9F2;
+    --mustard:    #D4A017;
+    --mustard-dk: #A97C10;
+    --cork:       #8B5E34;
+    --green:      #3F6B4C;
+    --red:        #A83A3A;
+    --border:     #C9C2AA;
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --font-mono:    'IBM Plex Mono', monospace;
+
+    --radius: 3px;
+    --shadow-pin: 0 6px 14px rgba(27,36,48,0.14);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background: var(--paper);
+    background-image:
+        radial-gradient(circle at 1px 1px, rgba(27,36,48,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+:focus-visible {
+    outline: 3px solid var(--mustard);
+    outline-offset: 2px;
+}
+
+.container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* ============================== HEADER ============================== */
+
+.header {
+    background: var(--ink);
+    color: var(--paper);
+    border-bottom: 4px solid var(--mustard);
+}
+
+.header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    max-width: 1120px;
+    margin: 0 auto;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+}
+
+.brand__tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--mustard);
+    border: 1px solid var(--mustard);
+    padding: 2px 6px;
+    border-radius: var(--radius);
+    letter-spacing: 0.06em;
+}
+
+.header__search {
+    flex: 1 1 320px;
+    display: flex;
+    max-width: 460px;
+}
+
+.header__search input {
+    flex: 1;
+    border: none;
+    padding: 10px 14px;
+    border-radius: var(--radius) 0 0 var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.header__search button {
+    border: none;
+    background: var(--mustard);
+    color: var(--ink);
+    padding: 0 16px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.92rem;
+}
+
+.header__nav a { opacity: 0.9; }
+.header__nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+
+.btn-pill {
+    background: var(--mustard);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: none;
+    cursor: pointer;
+}
+
+/* ============================== HERO ============================== */
+
+.hero {
+    padding: 46px 24px 30px;
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.hero__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--cork);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.hero__eyebrow::before {
+    content: "";
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    max-width: 16ch;
+}
+
+.hero p {
+    max-width: 46ch;
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+/* ============================== CATEGORIAS ============================== */
+
+.categorias {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 4px 24px 8px;
+    max-width: 1120px;
+    margin: 0 auto 8px;
+}
+
+.categoria-chip {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.categoria-chip:hover { transform: translateY(-1px); border-color: var(--cork); }
+
+.categoria-chip.ativo {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+}
+
+/* ============================== GRID DE PRODUTOS ============================== */
+
+.section-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    max-width: 1120px;
+    margin: 30px auto 16px;
+    padding: 0 24px;
+}
+
+.section-label h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.section-label span {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+
+.grid-produtos {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 26px;
+}
+
+/* Ficha pregada no mural — o elemento assinatura */
+.card-produto {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px 14px 16px;
+    box-shadow: var(--shadow-pin);
+    transform: rotate(var(--tilt, -0.6deg));
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    cursor: pointer;
+}
+
+.card-produto:nth-child(3n+1) { --tilt: 0.8deg; }
+.card-produto:nth-child(3n+2) { --tilt: -0.7deg; }
+.card-produto:nth-child(3n)   { --tilt: 0.3deg; }
+
+.card-produto:hover {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow: 0 14px 26px rgba(27,36,48,0.2);
+}
+
+.card-produto::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 12px;
+    background: var(--mustard);
+    border-radius: 50%;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3), inset 0 -2px 2px rgba(0,0,0,0.15);
+}
+
+.card-produto__img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    background: var(--paper-dim);
+    border-radius: 2px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.card-produto__cat {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--cork);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.card-produto__nome {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.02rem;
+    margin: 4px 0 8px;
+    line-height: 1.2;
+}
+
+.card-produto__rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px dashed var(--border);
+    padding-top: 8px;
+}
+
+.card-produto__preco {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--green);
+}
+
+.card-produto__vendedor {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+}
+
+.card-produto__sku {
+    position: absolute;
+    bottom: -9px;
+    right: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2px 6px;
+    border-radius: 2px;
+}
+
+.estado-vazio {
+    max-width: 1120px;
+    margin: 40px auto;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+/* ============================== FORMULÁRIOS (Login/Cadastro) ============================== */
+
+.tela-form {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.painel-form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    box-shadow: var(--shadow-pin);
+    width: 100%;
+    max-width: 420px;
+    padding: 36px 32px 30px;
+    position: relative;
+}
+
+.painel-form::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 12px;
+    background: var(--mustard);
+    border-radius: 50%;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+}
+
+.painel-form__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cork);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.painel-form h1 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin: 0 0 22px;
+    letter-spacing: -0.01em;
+}
+
+.campo {
+    margin-bottom: 16px;
+}
+
+.campo label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--ink-soft);
+}
+
+.campo input, .campo select, .campo textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+}
+
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+    border-color: var(--cork);
+}
+
+.campo-linha {
+    display: flex;
+    gap: 12px;
+}
+.campo-linha .campo { flex: 1; }
+
+.btn-primario {
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 13px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background 0.12s ease;
+}
+
+.btn-primario:hover { background: var(--ink-soft); }
+
+.form-rodape {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+}
+
+.form-rodape a {
+    color: var(--cork);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.mensagem-erro {
+    background: #FBEAEA;
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    display: none;
+}
+
+.mensagem-erro.visivel { display: block; }
+
+/* ============================== PÁGINA DE PRODUTO ============================== */
+
+.produto-detalhe {
+    max-width: 1000px;
+    margin: 36px auto 70px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 44px;
+}
+
+@media (max-width: 760px) {
+    .produto-detalhe { grid-template-columns: 1fr; }
+}
+
+.produto-detalhe__foto {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-pin);
+}
+
+.produto-detalhe__cat {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cork);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.produto-detalhe__nome {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.08;
+    margin: 8px 0 14px;
+    letter-spacing: -0.01em;
+}
+
+.produto-detalhe__preco {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.produto-detalhe__desc {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 22px;
+    white-space: pre-line;
+}
+
+.vendedor-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 22px;
+}
+
+.vendedor-card__avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--mustard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--ink);
+    flex-shrink: 0;
+}
+
+.vendedor-card__nome { font-weight: 600; font-size: 0.92rem; }
+.vendedor-card__status {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--green);
+}
+
+.acoes-produto {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-secundario {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 13px 18px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.qtd-estoque {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+}
+
+.qtd-estoque.baixo { color: var(--red); }
+
+/* ============================== TOAST ============================== */
+
+.toast {
+    position: fixed;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-size: 0.88rem;
+    font-family: var(--font-mono);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100;
+    border-left: 4px solid var(--mustard);
+}
+
+.toast.mostrar {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.erro { border-left-color: var(--red); }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}

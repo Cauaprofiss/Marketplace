@@ -1,41 +1,59 @@
 package com.br.ifsp.pji.marketplace.model;
 
-import java.time.LocalTime;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
 
+//entity/Vendedor.java
 @Entity
-public class Vendedor extends Usuario{
-
-	@OneToOne
-	@MapsId
-	private Usuario usuario;
-	private LocalTime horario;
-    private statusVendedor status;
-
-    public LocalTime getHorario() {
-        return horario;
-    }
-
-    public void setHorario(LocalTime horario) {
-        this.horario = horario;
-    }
-
-    public statusVendedor getStatus() {
-        return status;
-    }
-
-    public void setStatus(statusVendedor status) {
-        this.status = status;
-    }
-    
-    public Usuario getUsuario() {
+@Table(name = "Vendedor")
+@NoArgsConstructor
+public class Vendedor {
+	 @Id @Column(name = "id_usuario")
+	 private Long id;
+	
+	 @OneToOne @MapsId @JoinColumn(name = "id_usuario")
+	 private Usuario usuario;
+	
+	 private String horario;
+	
+	 @Enumerated(EnumType.STRING)
+	 private StatusVendedor status = StatusVendedor.offline;
+	 
+	 /*Getters e Setters*/
+	 
+	 public Long getId() {
+		return id;
+	}
+	 public void setId(Long id) {
+		this.id = id;
+	}
+	 
+	public Usuario getUsuario() {
 		return usuario;
 	}
-    public void setUsuario(Usuario usuario) {
+	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-    
+	
+	public String getHorario() {
+		return horario;
+	}
+	public void setHorario(String horario) {
+		this.horario = horario;
+	}
+	
+	public StatusVendedor getStatus() {
+		return status;
+	}
+	public void setStatus(StatusVendedor status) {
+		this.status = status;
+	}
 }

@@ -1,8 +1,7 @@
 package com.br.ifsp.pji.marketplace.model;
 
-public enum statusVendedor {
-
-	ONLINE,
-	OFFLINE,
-	DISPONIVEL
+public enum StatusVendedor {
+	online,
+    offline,
+    disponivel
 }
