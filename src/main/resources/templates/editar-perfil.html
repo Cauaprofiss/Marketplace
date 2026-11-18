@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tela de edição dos dados da conta no Campus Marketplace">
+  <title>Editar dados</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/perfil.css}" href="/Assets/css/perfil.css">
+  <link rel="stylesheet" href="/Assets/css/editar-perfil.css?v=20261026-account-edit-4" th:href="@{/Assets/css/editar-perfil.css(v='20261026-account-edit-4')}">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+</head>
+<body class="account-body edit-account-body">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+    <main class="account-main">
+      <div class="account-container">
+      <section class="account-heading">
+        <span>CAMPUS MARKETPLACE</span><h1>Editar dados</h1><p>Atualize seus dados e preferências de acesso.</p>
+      </section>
+
+      <p th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></p>
+      <p th:if="${sucesso}" th:text="${sucesso}" class="campus-notice" data-campus-notice hidden role="status"></p>
+
+      <div class="account-layout">
+        <aside class="account-sidebar">
+          <div class="account-avatar" aria-hidden="true"
+		  th:text="${usuario.sobrenome != null and !usuario.sobrenome.isEmpty() 
+		              ? #strings.substring(usuario.sobrenome, 0, 1) 
+		              : ''}">LR</div>
+		  <h2 th:text="${usuario.nome} + ' ' + ${usuario.sobrenome}">Lucas Rodrigues</h2>
+		  <nav class="account-nav" aria-label="Seções do perfil">
+		      <a th:href="@{/perfil}" href="/perfil">Meus dados</a>
+		      <a th:href="@{/compras}" href="/compras">Minhas compras</a>
+		      <a th:href="@{/anuncios}" href="/anuncios">Meus anúncios</a>
+		      <a class="active" th:href="@{/perfil/editar}" href="/perfil/editar">Editar dados</a>
+		  </nav>
+		  <button class="account-logout" type="button" data-logout-open>Sair da conta</button>
+        </aside>
+
+        <section class="account-card edit-account-card">
+          <form id="profile-form" th:action="@{/perfil}" method="post">
+
+            <input type="hidden" name="id" th:value="${usuario.idUsuario}">
+
+            <h2 id="dados">Meus dados</h2>
+
+			<div class="account-details edit-account-details">
+			  <label class="account-field"><span>Nome</span>
+			    <input type="text" name="nome" th:value="${usuario.nome}">
+			  </label>
+			  <label class="account-field"><span>Sobrenome</span>
+			    <input type="text" name="sobrenome" th:value="${usuario.sobrenome}">
+			  </label>
+			  <label class="account-field"><span>Telefone</span>
+			    <input type="text" name="telefone" th:value="${usuario.telefone}">
+			  </label>
+			  <label class="account-field" id="Turma"><span>Turma</span>
+			    <select name="turma.idTurma">
+			      <option th:each="t : ${turmas}"
+			              th:value="${t.idTurma}"
+			              th:text="${t.nomeTurma}"
+			              th:selected="${usuario.turma != null and usuario.turma.idTurma == t.idTurma}">
+			      </option>
+			    </select>
+			  </label>
+			  <label class="account-field"><span>E-mail institucional</span>
+			    <input type="email" name="email" th:value="${usuario.email}">
+			  </label>
+			
+			  <!-- NOVO: chave Pix -->
+			  <label class="account-field"><span>Chave Pix (para receber vendas)</span>
+			    <input type="text" name="chavePix" th:value="${usuario.chavePix}" placeholder="E-mail, CPF, telefone ou chave aleatória">
+			  </label>
+			
+			  <!-- CORRIGIDO: disponibilidade agora com name e valores do enum -->
+			  <label class="account-field" id="disponibilidade"><span>Disponibilidade</span>
+			    <select name="disponibilidade">
+			      <option value="">Não informar</option>
+			      <option value="intervalo" th:selected="${usuario.disponibilidade != null and usuario.disponibilidade.name() == 'intervalo'}">Intervalo</option>
+			      <option value="manha" th:selected="${usuario.disponibilidade != null and usuario.disponibilidade.name() == 'manha'}">Manhã</option>
+			      <option value="tarde" th:selected="${usuario.disponibilidade != null and usuario.disponibilidade.name() == 'tarde'}">Tarde</option>
+			    </select>
+			  </label>
+			  
+			  <label class="account-field"><span>Foto de perfil (URL)</span>
+			    <input type="text" name="imagem" th:value="${usuario.imagem}" placeholder="Link da sua foto">
+			  </label>
+			  
+			  <label class="account-field edit-account-bio"><span>Sobre você</span>
+			    <textarea name="descricao" rows="3" placeholder="Conte um pouco sobre você (opcional)" th:text="${usuario.descricao}"></textarea>
+			  </label>
+			</div>
+
+            <div class="divider"></div>
+
+            <section class="password-section" id="senha">
+              <h2>Atualizar senha</h2>
+              <div class="password-grid edit-password-grid">
+                <label class="account-field password-field"><span>Senha atual</span>
+                  <input type="password" name="senhaAtual" placeholder="Digite sua senha atual">
+                  <i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.6"></circle></svg></i>
+                </label>
+                <label class="account-field password-field"><span>Nova senha</span>
+                  <input type="password" name="novaSenha" placeholder="Digite aqui">
+                  <i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.6"></circle></svg></i>
+                </label>
+                <div class="password-actions">
+                  <button class="update-password" type="submit" th:formaction="@{/perfil/senha}" formmethod="post">
+                    Atualizar senha
+                  </button>
+                  <button class="delete-account" type="button" data-account-delete-open>
+                    Excluir Conta
+                  </button>
+                </div>
+              </div>
+            </section>
+            <button class="edit-save-profile" type="submit" th:formaction="@{/perfil}" formmethod="post">Salvar perfil</button>
+          </form>
+        </section>
+      </div>
+      </div>
+    </main>
+    <div class="logout-modal-overlay account-delete-overlay" data-account-delete-modal aria-hidden="true">
+      <section class="logout-modal account-delete-modal" role="dialog" aria-modal="true" aria-labelledby="account-delete-title">
+        <div class="logout-modal-topbar">
+          <span class="logout-modal-info account-delete-info" aria-hidden="true">!</span>
+          <button class="logout-modal-close" type="button" aria-label="Fechar confirmação" data-account-delete-close>×</button>
+        </div>
+        <h2 id="account-delete-title">Excluir sua conta?</h2>
+        <p>Essa ação é permanente. Seus dados e o acesso à sua conta serão removidos.</p>
+        <div class="logout-modal-actions account-delete-actions">
+          <button class="logout-cancel" type="button" data-account-delete-close>Cancelar</button>
+          <form method="post" th:action="@{/perfil/deletar}">
+            <button class="logout-cancel account-delete-confirm" type="submit">Confirmar exclusão</button>
+          </form>
+        </div>
+      </section>
+    </div>
+    <footer class="account-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script>
+    (() => {
+      const modal = document.querySelector('[data-account-delete-modal]');
+      if (!modal) return;
+      const setOpen = open => {
+        modal.classList.toggle('open', open);
+        modal.setAttribute('aria-hidden', String(!open));
+      };
+      document.querySelectorAll('[data-account-delete-open]').forEach(button => {
+        button.addEventListener('click', () => setOpen(true));
+      });
+      modal.querySelectorAll('[data-account-delete-close]').forEach(button => {
+        button.addEventListener('click', () => setOpen(false));
+      });
+      modal.addEventListener('mousedown', event => {
+        if (event.target === modal) setOpen(false);
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && modal.classList.contains('open')) setOpen(false);
+      });
+    })();
+  </script>
+  <script>
+    (() => {
+      const body = document.body;
+      const revealItems = document.querySelectorAll('.edit-account-details .account-field, .edit-account-card .divider, .edit-account-card .password-section');
+      if (!revealItems.length || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      body.classList.add('has-scroll-reveal');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+      revealItems.forEach((item, index) => {
+        item.classList.add('scroll-reveal');
+        item.style.transitionDelay = `${Math.min(index % 4, 3) * 70}ms`;
+        observer.observe(item);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Pagamento via Pix — Campus MarketPlace</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+:root{
+ --green:#205944;--deep:#17392f;--soft:#dceae2;--cream:#f3f0df;
+ --paper:#fffdf6;--red:#a92e26;--ink:#1a1a1a;--muted:#66736c;
+ --line:#d3dacd;--white:#fffdf6;--shadow:0 10px 25px rgba(23,57,47,.09);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Poppins,Arial,sans-serif;background:var(--cream);color:var(--ink)}
+body{display:flex;flex-direction:column;min-height:100vh}
+a{text-decoration:none;color:inherit}
+.topbar{height:72px;background:var(--green);color:#fff}
+.nav{max-width:1080px;height:72px;margin:auto;padding:0 20px;display:flex;align-items:center;gap:30px}
+.brand{width:125px;line-height:.9;font-size:19px;font-weight:800;white-space:nowrap}
+.brand small{display:block;font-size:8px;font-weight:600;margin-bottom:3px}
+.brand span{color:#dceae2}
+.navlinks{display:flex;align-items:center;gap:24px;flex:1}
+.navlinks a{font-size:10px;color:#f4faf6;padding:26px 0 23px;position:relative}
+.navlinks a.active:after{content:"";position:absolute;left:0;right:0;bottom:18px;height:2px;background:#e34a42}
+.nav-right{display:flex;align-items:center;gap:8px}
+.search{width:270px;height:31px;background:var(--paper);border:0;border-radius:9px;padding:0 13px;font:9px Poppins;color:var(--muted);outline:0}
+.icon-btn,.profile-btn{height:31px;background:var(--paper);border:0;border-radius:9px;color:var(--green);font-weight:700;cursor:pointer}
+.icon-btn{width:31px;font-size:13px}.profile-btn{width:96px;font-size:9px}
+.container{max-width:1080px;width:100%;margin:0 auto;padding:18px 20px 52px;flex:1}
+.eyebrow{font-size:8px;color:var(--red);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+h1{font-size:28px;line-height:1.1;color:var(--deep);margin:5px 0 4px;font-weight:800}
+.subtitle{font-size:10px;color:var(--muted);margin:0}
+.steps{max-width:620px;margin:17px auto 21px;display:grid;grid-template-columns:repeat(4,1fr);position:relative}
+.steps:before{content:"";position:absolute;top:13px;left:12.5%;right:12.5%;height:3px;background:#d4d9cf;z-index:0}
+.step{position:relative;z-index:1;text-align:center;font-size:8px;color:var(--muted)}
+.step .circle{width:29px;height:29px;margin:auto;border-radius:50%;background:var(--paper);border:2px solid #d4d9cf;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.step.done .circle,.step.current .circle{background:var(--green);border-color:var(--green);color:#fff}
+.step.done:after,.step.current:after{content:"";position:absolute;height:3px;background:var(--green);top:13px;left:50%;width:100%;z-index:-1}
+.step.current:after{display:none}.step b{display:block;margin-top:5px;color:var(--green)}
+.two-col{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.9fr);gap:18px;align-items:stretch}
+.card{background:var(--paper);border:1px solid rgba(211,218,205,.8);border-radius:16px;box-shadow:var(--shadow)}
+.card.light{padding:25px 26px}.card.green{background:var(--green);color:#fff;padding:25px 26px}
+.card h2{font-size:17px;color:var(--deep);margin:0 0 18px}.card.green h2{color:#fff;font-size:12px;text-transform:uppercase}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field label{display:block;font-size:9px;font-weight:700;color:var(--deep);margin:0 0 6px}
+.field select,.field input,.field textarea{width:100%;height:38px;border:1px solid var(--line);border-radius:10px;background:#fffdf6;padding:0 11px;font:9px Poppins;color:var(--deep);outline:none}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:26px}
+.choice{border:1.5px solid transparent;border-bottom-color:#e7e7dc;border-radius:13px;padding:14px 12px;cursor:pointer;min-height:70px}
+.choice.selected{border-color:var(--green);background:#eef5f0}.choice input{accent-color:var(--green);margin-right:8px}.choice strong{font-size:11px;color:var(--deep)}.choice p{font-size:8px;color:var(--muted);margin:5px 0 0 20px}
+.notice{margin-top:25px;padding:14px 16px;background:var(--soft);border-radius:9px;color:var(--green);font-size:8px;font-weight:600}
+.summary-list{margin:3px 0 18px}.summary-row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;font-size:8px}.summary-row strong{font-size:9px}.summary-divider{height:1px;background:rgba(255,255,255,.25);margin:7px 0 11px}.summary-total{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:700}.summary-total strong{font-size:20px}
+.btn{width:100%;height:38px;border:0;border-radius:10px;background:var(--green);color:#fff;font:700 9px Poppins;cursor:pointer}.green .btn{background:var(--paper);color:var(--green)}.btn.secondary{background:transparent;color:var(--green);border:0}.green .btn.secondary{color:#fff;background:transparent}.actions{display:flex;gap:10px;margin-top:19px}.actions .btn{flex:1}
+.helper{text-align:center;font-size:7px;color:var(--muted);margin:10px 0 0}.green .helper{color:#dceae2}
+.footer{height:34px;background:var(--green);color:#dceae2;display:flex;align-items:center}.footer-inner{max-width:1080px;width:100%;margin:auto;padding:0 20px;display:flex;justify-content:space-between;font-size:7px}
+@media(max-width:850px){.navlinks{display:none}.search{width:180px}.two-col{grid-template-columns:1fr}.container{padding-bottom:35px}.green{min-height:auto}}
+@media(max-width:560px){.nav{gap:12px}.nav-right{margin-left:auto}.search{display:none}.form-grid,.choice-grid{grid-template-columns:1fr}.steps{margin-top:20px}.card.light,.card.green{padding:20px}.footer{height:auto;padding:10px 0}.footer-inner{gap:8px;flex-direction:column}}
+
+.pix-card{display:grid;grid-template-columns:42% 58%;padding:27px 42px;min-height:350px;align-items:center}
+.qr-area{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.qr{width:235px;height:235px;background:var(--soft);padding:15px;border-radius:11px}.qr svg{width:100%;height:100%;display:block}.qr-area>span{font-size:9px;color:var(--muted);margin-top:9px}
+.pix-content{position:relative;padding:0 0 0 5px}.pix-content h2{font-size:20px;margin:0 0 5px}.pix-content>p{font-size:9px;color:var(--muted);margin:0 0 14px}.pix-price{font-size:26px;font-weight:800;color:var(--green);margin-bottom:23px}.expire{position:absolute;right:0;top:-8px;background:var(--red);color:#fff;border-radius:18px;padding:7px 15px;font-size:8px;font-weight:700;box-shadow:0 3px 7px rgba(0,0,0,.15)}
+.pix-label{display:block;font-size:8px;font-weight:700;color:var(--deep);margin-bottom:5px}.copy-row{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fffdf6}.copy-row input{height:35px;border:0;outline:0;flex:1;padding:0 10px;background:transparent;font:8px Poppins;color:var(--muted)}.copy-row input[readonly]{color:#87928b;cursor:default;box-shadow:none;outline:none}.copy-row input[readonly]:focus{outline:none;box-shadow:none}.copy-icon{width:35px;border:0;background:transparent;color:var(--green);cursor:pointer}.pix-content .actions{align-items:stretch}.pix-content .actions .btn.secondary{background:transparent;border:0}.pix-foot{font-size:7px!important;color:var(--muted);margin-top:19px!important}
+@media(max-width:700px){.pix-card{grid-template-columns:1fr;padding:22px}.qr{width:205px;height:205px}.pix-content{padding-top:28px}.expire{top:0}}
+</style>  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav">
+    <a class="brand" th:href="@{/home}"><small>Campus</small>Market<span>Place</span></a>
+    <div class="navlinks">
+      <a class="active" th:href="@{/home}">Home</a>
+      <a th:href="@{/produtos}">Vitrine Virtual</a>
+      <a th:href="@{/sobre}">Sobre</a>
+    </div>
+    <div class="nav-right">
+      <input class="search" type="search" placeholder="Buscar no campus">
+      <button class="icon-btn" type="button" title="Favoritos">♡</button>
+      <a class="icon-btn" style="display:flex;align-items:center;justify-content:center" th:href="@{/carrinho}" title="Carrinho">▱</a>
+      <button class="icon-btn" type="button" title="Notificações">♧</button>
+      <a class="profile-btn" style="display:flex;align-items:center;justify-content:center" th:href="@{/perfil}">Perfil</a>
+    </div>
+  </nav>
+</header>
+<main class="container">
+<div class="eyebrow">Campus Marketplace</div>
+<h1>Pagamento via Pix</h1>
+<p class="subtitle">Escaneie o QR ou copie o código para concluir.</p>
+
+<div class="steps">
+  <div class="step done"><div class="circle">1</div><span>Carrinho</span></div>
+  <div class="step current"><div class="circle">2</div><b>Pagamento</b></div>
+  <div class="step"><div class="circle">3</div><span>Retirada</span></div>
+  <div class="step"><div class="circle">4</div><span>Concluído</span></div>
+</div>
+
+<section class="card pix-card" th:each="pag : ${pagamentos}" style="margin-bottom:18px">
+  <div class="qr-area">
+    <div class="qr">
+      <svg viewBox="0 0 210 210" aria-label="QR Code ilustrativo" role="img">
+        <rect width="210" height="210" fill="#fff"/>
+        <g fill="#1a1a1a">
+          <rect x="12" y="12" width="58" height="58"/><rect x="22" y="22" width="38" height="38" fill="#fff"/><rect x="31" y="31" width="20" height="20"/>
+          <rect x="140" y="12" width="58" height="58"/><rect x="150" y="22" width="38" height="38" fill="#fff"/><rect x="159" y="31" width="20" height="20"/>
+          <rect x="12" y="140" width="58" height="58"/><rect x="22" y="150" width="38" height="38" fill="#fff"/><rect x="31" y="159" width="20" height="20"/>
+          <path d="M82 12h18v18H82zM106 12h14v30h-14zM78 45h18v22H78zM105 49h18v18h-18zM128 45h12v26h-12zM75 77h20v15H75zM102 75h14v27h-14zM123 77h28v14h-28zM158 78h18v18h-18zM184 80h14v28h-14zM12 80h18v18H12zM38 80h28v14H38zM12 106h28v15H12zM48 103h18v25H48zM76 105h13v20H76zM98 108h30v14H98zM137 103h16v26h-16zM160 107h15v17h-15zM181 111h17v14h-17zM78 132h17v16H78zM102 128h19v18h-19zM128 131h15v30h-15zM150 130h28v15h-28zM184 132h14v24h-14zM75 153h20v15H75zM101 153h15v28h-15zM120 166h25v15h-25zM149 153h16v28h-16zM171 161h27v18h-27z"/>
+        </g>
+      </svg>
+    </div>
+    <span>QR ilustrativo</span>
+  </div>
+  <div class="pix-content">
+    <h2 th:text="'Pagar a ' + ${pag.nomeVendedor}">Escaneie para pagar</h2>
+    <p>Abra o aplicativo do seu banco e confirme o valor.</p>
+    <div class="pix-price" th:text="${'R$ ' + #numbers.formatDecimal(pag.valor, 1, 2, 'COMMA')}">R$ 38,00</div>
+    <label class="pix-label">Pix copia e cola</label>
+    <div class="copy-row">
+      <input type="text" readonly th:value="${pag.codigoPix}" class="pix-code-input">
+      <button type="button" class="copy-icon" onclick="copyPix(this)" title="Copiar código">▣</button>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" type="button" onclick="copyPix(this)">Copiar código</button>
+      <form th:action="@{/compras/pix/confirmar}" method="post" style="flex:1">
+        <input type="hidden" name="idPagamento" th:value="${pag.idPagamento}">
+        <button class="btn" type="submit">Já paguei</button>
+      </form>
+    </div>
+    <p class="pix-foot">O comprovante ficará vinculado à negociação.</p>
+  </div>
+</section>
+</main>
+<footer class="footer"><div class="footer-inner">
+  <span>Campus MarketPlace • IFSP São Miguel Paulista</span><span>© 2026</span>
+</div></footer>
+<script>
+let seconds=9*60+42;
+const expire=document.getElementById('expire');
+const timer=setInterval(()=>{
+ if (!expire) { clearInterval(timer); return; }
+ seconds=Math.max(0,seconds-1);
+ const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0');
+ expire.textContent=seconds>0?`Expira em ${m}:${s}`:'Pix expirado';
+ if(seconds===0)clearInterval(timer);
+},1000);
+async function copyPix(triggerEl){
+ const input = triggerEl.closest('.pix-content').querySelector('.pix-code-input');
+ try {
+   if (navigator.clipboard?.writeText) {
+     await navigator.clipboard.writeText(input.value);
+   } else {
+     input.select();
+     if (!document.execCommand('copy')) throw new Error('Cópia indisponível.');
+   }
+   CampusFeedback.success('Código Pix copiado.');
+ } catch {
+   CampusFeedback.error('Não foi possível copiar o código Pix. Tente novamente.');
+ }
+}
+</script></body></html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de vendas — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/gestao-vendas.css(v='20261103-sales-polish-1')}" href="/Assets/css/gestao-vendas.css?v=20261103-sales-polish-1">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="sales-page">
+<div class="sales-shell">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="sales-main">
+    <header class="sales-heading">
+      <span>CAMPUS MARKETPLACE</span>
+      <h1>Gestão de vendas</h1>
+      <p>Acompanhe pedidos e atualize o status de cada negociação.</p>
+    </header>
+
+    <div th:if="${sucessoAgendamento != null}" th:text="${sucessoAgendamento}" class="campus-notice" data-campus-notice hidden role="status"></div>
+    <div th:if="${erroAgendamento != null}" th:text="${erroAgendamento}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+
+    <div class="sales-layout" th:classappend="${detalhe == null} ? ' no-detail' : ''">
+      <section class="orders-panel">
+        <h2>Pedidos recentes</h2>
+
+        <div class="orders-list" th:if="${pedidos != null and !#lists.isEmpty(pedidos)}">
+          <article class="order-row" th:each="pedido : ${pedidos}" th:classappend="${detalhe != null and detalhe.idCompraVendedor == pedido.idCompraVendedor} ? ' selected' : ''">
+            <div class="order-main-link">
+              <span class="order-image">
+                <img th:if="${pedido.fotoUrl != null and !#strings.isEmpty(pedido.fotoUrl)}" th:src="@{${pedido.fotoUrl}}" th:alt="${pedido.produtoResumo}">
+                <svg th:unless="${pedido.fotoUrl != null and !#strings.isEmpty(pedido.fotoUrl)}" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>
+              </span>
+              <span class="order-copy">
+                <small th:text="${'Pedido #' + pedido.codigo}">Pedido #CM-2048</small>
+                <strong th:text="${pedido.produtoResumo}">Bolo de chocolate</strong>
+                <em th:text="${'Vendido para ' + pedido.compradorNome}">Vendido para Ana Souza</em>
+              </span>
+            </div>
+
+            <span class="order-status" th:classappend="${pedido.statusChave}" th:text="${pedido.statusLabel}">Em andamento</span>
+            <strong class="order-total" th:text="${'R$ ' + #numbers.formatDecimal(pedido.total,1,2,'COMMA')}">R$ 12,00</strong>
+            <a class="order-action" th:href="@{/vendas/{id}(id=${pedido.idCompraVendedor})}">Acompanhar</a>
+          </article>
+        </div>
+
+        <div class="orders-empty" th:if="${pedidos == null or #lists.isEmpty(pedidos)}">
+          <span>◇</span>
+          <h3>Nenhuma venda recebida</h3>
+          <p>Os novos pedidos aparecerão aqui.</p>
+        </div>
+      </section>
+
+      <aside class="sale-detail" th:if="${detalhe != null}" th:classappend="${detalhe.agendamento != null and detalhe.agendamento.status.name() == 'concluido'} ? ' completed' : ''">
+        <a class="detail-close" th:href="@{/vendas}" aria-label="Fechar detalhes"><span aria-hidden="true">×</span> Fechar detalhe <b th:text="${detalhe.codigo}">CM-2048</b></a>
+
+        <h2 th:text="${'Comprador: ' + detalhe.comprador.nome + (detalhe.comprador.sobrenome != null and !#strings.isEmpty(detalhe.comprador.sobrenome) ? ' ' + detalhe.comprador.sobrenome : '')}">Comprador: Cauê Campos</h2>
+
+        <div class="detail-items">
+          <article class="detail-item" th:each="item : ${detalhe.itens}">
+            <span class="detail-item-image">
+              <img th:if="${item.produto.fotoUrl != null and !#strings.isEmpty(item.produto.fotoUrl)}" th:src="@{${item.produto.fotoUrl}}" th:alt="${item.produto.nome}">
+              <svg th:unless="${item.produto.fotoUrl != null and !#strings.isEmpty(item.produto.fotoUrl)}" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>
+            </span>
+            <span><strong th:text="${item.produto.nome}">Produto</strong><small th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario,1,2,'COMMA') + ' • ' + item.quantidade + ' unidade' + (item.quantidade > 1 ? 's' : '')}">R$ 12,00 • 1 unidade</small></span>
+          </article>
+        </div>
+
+        <dl class="detail-summary">
+          <div><dt>Total</dt><dd th:text="${'R$ ' + #numbers.formatDecimal(detalhe.total,1,2,'COMMA')}">R$ 12,00</dd></div>
+          <div><dt>Pagamento</dt><dd th:text="${detalhe.pagamento != null and detalhe.pagamento.status.name() == 'pago' ? 'Pago' : 'Pendente'}">Pago</dd></div>
+          <div><dt>Retirada</dt><dd th:text="${detalhe.agendamento == null ? 'Não agendada' : (detalhe.agendamento.status.name() == 'concluido' ? 'Concluída' : (detalhe.agendamento.status.name() == 'cancelado' ? 'Cancelada' : 'Em andamento'))}">Concluída</dd></div>
+        </dl>
+
+        <div class="detail-actions" th:if="${detalhe.agendamento != null and detalhe.agendamento.status.name() != 'concluido' and detalhe.agendamento.status.name() != 'cancelado'}">
+          <form th:if="${!detalhe.agendamento.confirmadoVendedor}" th:action="@{/vendas/{id}/confirmar-entrega(id=${detalhe.idCompraVendedor})}" method="post"><button class="detail-button primary" type="submit">Confirmar entrega</button></form>
+          <span class="detail-waiting" th:if="${detalhe.agendamento.confirmadoVendedor}">Aguardando confirmação do comprador</span>
+          <a class="detail-button secondary" th:href="@{/agendamentos/{id}/reagendar(id=${detalhe.agendamento.idAgendamento})}">Reagendar</a>
+          <form th:action="@{/agendamentos/{id}/nao-compareceu(id=${detalhe.agendamento.idAgendamento})}" method="post"><button class="detail-button danger" type="submit">Não compareceu</button></form>
+        </div>
+
+        <a class="view-listing" th:if="${detalhe.itens != null and !#lists.isEmpty(detalhe.itens)}" th:href="@{/produtos/{id}(id=${detalhe.itens[0].produto.idProduto})}">Ver anúncio</a>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="sales-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+</div>
+<script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body>
+</html>

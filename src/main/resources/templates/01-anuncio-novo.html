@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Criar anúncio - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2"><link rel="stylesheet" th:href="@{/Assets/css/anuncio-wizard.css(v='20261026-service-disabled-2')}" href="/Assets/css/anuncio-wizard.css?v=20261026-service-disabled-2">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="wizard-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="wizard-main">
+    <div class="wizard-stepper" style="--progress:0%" aria-label="Etapas de criação do anúncio"><div class="wizard-stepper-progress"></div>
+      <div class="wizard-step is-active"><div class="wizard-step-circle">1</div><span>Início</span></div><div class="wizard-step"><div class="wizard-step-circle">2</div><span>Fotos</span></div><div class="wizard-step"><div class="wizard-step-circle">3</div><span>Categoria</span></div><div class="wizard-step"><div class="wizard-step-circle">4</div><span>Informações</span></div><div class="wizard-step"><div class="wizard-step-circle">5</div><span>Valor</span></div><div class="wizard-step"><div class="wizard-step-circle">6</div><span>Publicar</span></div>
+    </div>
+    <div class="wizard-heading"><h1>Criar anúncio</h1><p>Publique seu produto em poucos passos simples.</p></div>
+    <form class="wizard-start-form" method="post" th:action="@{/anuncios/novo}">
+      <section class="wizard-card wizard-start-card"><div th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div><div class="wizard-grid wizard-start-grid">
+        <div><h2>O que você vai anunciar?</h2><p>Comece com um nome provisório e escolha o tipo de anúncio.</p>
+          <div class="wizard-field"><label for="nomeProvisorio">Nome provisório</label><input class="wizard-input" id="nomeProvisorio" name="nome" type="text" th:value="${passo1 != null and passo1.nome != null ? passo1.nome : ''}" placeholder="Digite o nome do produto" maxlength="45" data-character-limit required><div class="wizard-field-footer wizard-field-footer-counter"><small class="character-counter" data-character-counter-for="nomeProvisorio"><span data-remaining>45</span> caracteres restantes</small></div></div>
+          <div class="wizard-field"><span class="wizard-label">Tipo de anúncio</span><div class="wizard-options" data-option-group>
+            <label class="wizard-option is-selected"><input type="radio" name="tipo" value="PRODUTO" checked hidden><span class="wizard-radio"></span><strong>Produto</strong><small>Item físico para venda</small></label>
+            <label class="wizard-option is-disabled" aria-disabled="true" title="Tipo de anúncio indisponível"><input type="radio" name="tipo" value="SERVICO" disabled hidden><span class="wizard-radio"></span><strong>Serviço</strong><small>Atividade ou encomenda</small></label>
+          </div></div>
+        </div>
+        <aside class="wizard-safety"><b>01</b><h2>Anuncie com segurança</h2><p>Use informações reais, combine a retirada em áreas comuns e mantenha tudo registrado na conversa da plataforma.</p></aside>
+      </div></section>
+      <div class="wizard-actions"><a class="wizard-button wizard-button-secondary" th:href="@{/home}" href="/home">Voltar</a><button class="wizard-button wizard-button-primary" type="submit">Continuar</button></div>
+    </form>
+  </main>
+  <footer class="wizard-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/character-counter.js}" src="/Assets/JavaScript/character-counter.js"></script>
+  <script>document.querySelectorAll('[data-option-group]').forEach(group=>group.querySelectorAll('.wizard-option').forEach(option=>option.addEventListener('click',()=>{if(option.classList.contains('is-disabled'))return;group.querySelectorAll('.wizard-option').forEach(item=>item.classList.remove('is-selected'));option.classList.add('is-selected');option.querySelector('input').checked=true;})));</script>
+</body></html>
+

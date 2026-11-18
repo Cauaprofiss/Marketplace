@@ -1,0 +1,45 @@
+Tarefas diárias até a última entrega Pji:
+
+✅RF01 – Cadastro de Usuário
+✅RF02 – Login do Usuário
+✅RF03 – Recuperação de Senha
+RF04 – Consulta de Produtos/FRONT
+✅RF05 – Visualização de Produto
+✅RF06 – Gerenciamento do Carrinho - cada usuario tem q ter o seu carrinho, tem q fazer específicação pelo id
+RF07 – Registro de Compra
+RF08 – Histórico de Compras
+RF09 – Painel do Usuário
+✅RF10 – Cadastro de Produtos
+RF11 – Consulta de Produtos Cadastrados/FRONT
+RF12 – Atualização de Produtos
+RF13 – Exclusão de Produtos
+RF14 – Gerenciamento de Estoque
+RF15 – Acompanhamento de Vendas
+RF16 – Atualização do Status do Pedido
+RF17 – Notificação de Novas Vendas
+✅RF18 – Logout do Usuário
+✅RF19 – Validação de Credenciais
+✅RF20 – Validação de Campos Obrigatórios
+✅RF21 – Exibição de Produtos Disponíveis
+RF22 – Tratamento de Pagamento Inválido
+RF23 – Confirmação de Compra
+RF24 – Notificação de Nova Venda
+✅RF25 – Encerramento Automático de Sessão
+✅RF26 – Controle de Acesso
+RF27 – Logs do Sistema
+RF28 – Backup do Sistema
+RF29 – Disponibilidade do Sistema
+RF30 – Gerenciamento de Favoritos
+RF31 – Chat entre Usuários
+RF32 – Visualização de Conversas
+RF33 – Avaliação de Compra
+RF34 – Avaliação de Produto/Anúncio
+RF35 – Gerenciamento de Denúncias
+RF36 – Análise de Denúncias
+RF37 – Moderação de Anúncios
+RF38 – Gerenciamento de Agendamentos
+RF39 – Gerenciamento de Turmas
+RF40 – Gerenciamento de Categorias
+RF41 – Contribuição do Usuário
+RF42 – Acompanhamento Detalhado do Pedido
+RF43 – Notificações do Sistema

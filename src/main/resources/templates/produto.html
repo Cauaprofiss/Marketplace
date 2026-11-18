@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" th:content="${anuncio.nome + ' — Campus MarketPlace'}" content="Detalhes do produto no Campus MarketPlace">
+  <title th:text="${anuncio.nome + ' — Campus MarketPlace'}">Produto — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/produto.css(v='20261103-product-unavailable-popup-2')}" href="/Assets/css/produto.css?v=20261103-product-unavailable-popup-2">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="product-detail-page">
+<div class="app-shell">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="product-page page-enter">
+    <nav class="breadcrumbs" aria-label="Navegação estrutural">
+      <a th:href="@{/home}" href="/home">Home</a><span>›</span>
+      <a th:href="@{/produtos(busca=${anuncio.categoria != null ? anuncio.categoria.nome : ''})}" href="/produtos" th:text="${anuncio.categoria != null ? anuncio.categoria.nome : 'Produtos'}">Eletrônicos</a><span>›</span>
+      <strong th:text="${anuncio.nome}">Fone bluetooth</strong>
+    </nav>
+
+    <div th:if="${sucessoCarrinho != null}" th:text="${sucessoCarrinho}" class="campus-notice" data-campus-notice hidden role="status">Produto adicionado ao carrinho.</div>
+    <div th:if="${erroCarrinho != null}" th:text="${erroCarrinho}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert">Não foi possível adicionar o produto.</div>
+    <div th:if="${erro != null}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert">Não foi possível concluir a ação.</div>
+
+    <section class="product-reference-layout">
+      <article class="product-gallery-card reveal">
+        <div class="gallery-main" data-gallery-main>
+          <span class="featured-badge">Anúncio em destaque</span>
+          <button class="gallery-favorite" type="button" data-product-favorite
+                  th:classappend="${favorito} ? ' saved' : ''"
+                  th:attr="data-product-id=${anuncio.idProduto},aria-pressed=${favorito},aria-label=${favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>
+          </button>
+          <img th:if="${!#lists.isEmpty(imagens)}" th:src="@{${imagens[0]}}" th:alt="${anuncio.nome}" data-main-image fetchpriority="high" decoding="async">
+          <div class="gallery-placeholder" th:if="${#lists.isEmpty(imagens)}" aria-label="Produto sem foto">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg><span>Produto sem foto</span>
+          </div>
+        </div>
+
+        <div class="gallery-thumbs" th:if="${!#lists.isEmpty(imagens)}" aria-label="Fotos do produto">
+          <button type="button" th:each="imagem, iter : ${imagens}" th:classappend="${iter.first} ? ' active' : ''" th:attr="data-gallery-src=${imagem},aria-label=${'Ver foto ' + (iter.index + 1)}"><img th:src="@{${imagem}}" alt="" loading="lazy"></button>
+        </div>
+
+      </article>
+
+      <div class="product-information reveal">
+        <div class="product-topline">
+          <span class="category-pill"><i></i><span th:text="${anuncio.categoria != null ? anuncio.categoria.nome : 'Produtos'}">Eletrônicos</span></span>
+          <a class="report-link" th:if="${usuario == null or anuncio.usuario == null or usuario.idUsuario != anuncio.usuario.idUsuario}" th:href="@{/denuncias/novo(idProduto=${anuncio.idProduto})}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22V3C9 -2 15 8 20 3V14C15 19 9 9 4 14"/></svg><span>Denunciar anúncio</span></a>
+        </div>
+
+        <div class="product-title-row" data-product-title>
+          <h1><span data-product-title-text th:text="${anuncio.nome}">Fone bluetooth vermelho</span><span class="title-ellipsis" aria-hidden="true">...</span></h1>
+          <button class="title-expand-button" type="button" data-product-title-toggle aria-label="Mostrar título completo" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+          </button>
+        </div>
+        <p class="product-seller-line"><i></i><span>Anunciado por <strong th:text="${anuncio.usuario.nome + (anuncio.usuario.sobrenome != null and !#strings.isEmpty(anuncio.usuario.sobrenome) ? ' ' + anuncio.usuario.sobrenome : '')}">Aluno IFSP</strong></span><b>•</b><span class="product-rating-inline" th:if="${avaliacoesProduto != null and !#lists.isEmpty(avaliacoesProduto)}"><b aria-hidden="true">★</b><strong th:text="${#numbers.formatDecimal(mediaAvaliacoesProduto, 1, 1, 'COMMA')}">5,0</strong><em th:text="${'(' + #lists.size(avaliacoesProduto) + (#lists.size(avaliacoesProduto) == 1 ? ' avaliação)' : ' avaliações)')}">(1 avaliação)</em></span><span class="product-rating-inline product-rating-empty" th:unless="${avaliacoesProduto != null and !#lists.isEmpty(avaliacoesProduto)}">Ainda sem avaliações</span></p>
+
+        <div class="price-panel">
+          <div class="price-copy"><span>Preço do anúncio</span><strong><small>R$</small><b th:text="${#numbers.formatDecimal(anuncio.preco, 1, 2, 'COMMA')}">45,00</b></strong></div>
+          <form id="cartForm" th:if="${usuario == null or anuncio.usuario == null or usuario.idUsuario != anuncio.usuario.idUsuario}" th:action="@{/carrinho/adicionar}" method="post">
+            <input type="hidden" name="idProduto" th:value="${anuncio.idProduto}"><input type="hidden" name="quantidade" value="1" data-quantity>
+            <button class="add-cart" type="submit" th:disabled="${anuncio.status.name() != 'disponivel' or anuncio.quantidade == null or anuncio.quantidade <= 0}" th:classappend="${anuncio.status.name() != 'disponivel' or anuncio.quantidade == null or anuncio.quantidade <= 0} ? ' is-unavailable'">
+              <span th:text="${anuncio.status.name() != 'disponivel' or anuncio.quantidade == null or anuncio.quantidade <= 0 ? 'Indisponível' : 'Adicionar ao carrinho'}">Adicionar ao carrinho</span>
+            </button>
+          </form>
+          <a class="price-status own-announcement-link" th:if="${usuario != null and anuncio.usuario != null and usuario.idUsuario == anuncio.usuario.idUsuario}" th:href="@{/anuncios}">Seu anúncio</a>
+        </div>
+
+        <div class="primary-actions" th:if="${usuario == null or anuncio.usuario == null or usuario.idUsuario != anuncio.usuario.idUsuario}">
+          <form class="buy-now-form" th:action="@{/carrinho/adicionar}" method="post"><input type="hidden" name="idProduto" th:value="${anuncio.idProduto}"><input type="hidden" name="quantidade" value="1"><button class="buy-now" type="submit" th:disabled="${anuncio.status.name() != 'disponivel' or anuncio.quantidade == null or anuncio.quantidade <= 0}" th:classappend="${anuncio.status.name() != 'disponivel' or anuncio.quantidade == null or anuncio.quantidade <= 0} ? ' is-unavailable'">Comprar agora</button></form>
+          <form class="message-form" th:action="@{/conversas/iniciar}" method="post"><input type="hidden" name="idUsuario" th:value="${anuncio.usuario.idUsuario}"><input type="hidden" name="idProduto" th:value="${anuncio.idProduto}"><button class="send-message" type="submit">Enviar mensagem</button></form>
+        </div>
+
+        <p class="owner-note" th:if="${usuario != null and anuncio.usuario != null and usuario.idUsuario == anuncio.usuario.idUsuario}">Este anúncio é seu. Você pode acompanhá-lo em “Meus anúncios”.</p>
+
+        <article class="details-card"><h2>Detalhes do produto</h2><p th:text="${anuncio.descricao != null and !#strings.isEmpty(anuncio.descricao) ? anuncio.descricao : 'O vendedor ainda não adicionou uma descrição para este produto.'}">Descrição do produto.</p></article>
+
+        <article class="seller-card">
+          <img th:if="${anuncio.usuario.imagem != null and !#strings.isEmpty(anuncio.usuario.imagem)}" th:src="@{${anuncio.usuario.imagem}}" alt="Foto do vendedor">
+          <span class="seller-avatar" th:unless="${anuncio.usuario.imagem != null and !#strings.isEmpty(anuncio.usuario.imagem)}" th:text="${#strings.substring(anuncio.usuario.nome,0,1) + (anuncio.usuario.sobrenome != null and !#strings.isEmpty(anuncio.usuario.sobrenome) ? #strings.substring(anuncio.usuario.sobrenome,0,1) : '')}">IF</span>
+          <div class="seller-copy"><strong th:text="${anuncio.usuario.nome + (anuncio.usuario.sobrenome != null and !#strings.isEmpty(anuncio.usuario.sobrenome) ? ' ' + anuncio.usuario.sobrenome : '')}">Aluno IFSP</strong><p th:text="${anuncio.usuario.descricao != null and !#strings.isEmpty(anuncio.usuario.descricao) ? anuncio.usuario.descricao : 'Responde normalmente em poucos minutos durante o intervalo.'}">Responde normalmente em poucos minutos durante o intervalo.</p><a th:href="@{/vendedores/{id}(id=${anuncio.usuario.idUsuario})}">ver perfil <span>›</span></a></div>
+          <span class="seller-rating"
+                th:title="${totalAvaliacoesVendedor == 1 ? '1 avaliação do vendedor' : totalAvaliacoesVendedor + ' avaliações do vendedor'}"
+                th:attr="aria-label=${totalAvaliacoesVendedor > 0 ? 'Avaliação média do vendedor: ' + #numbers.formatDecimal(mediaVendedor,1,1,'COMMA') + ' de 5' : 'Vendedor ainda sem avaliações'}">
+            <b aria-hidden="true">★</b><em th:text="${totalAvaliacoesVendedor > 0 ? #numbers.formatDecimal(mediaVendedor,1,1,'COMMA') : '—'}">—</em>
+          </span>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div class="unavailable-overlay" data-unavailable-popup
+       th:if="${anuncio.status.name() != 'disponivel' or anuncio.quantidade == null or anuncio.quantidade <= 0}"
+       role="presentation">
+    <section class="unavailable-dialog" role="dialog" aria-modal="true" aria-labelledby="unavailableTitle" aria-describedby="unavailableDescription">
+      <h2 id="unavailableTitle" class="unavailable-visually-hidden" th:text="${anuncio.quantidade == null or anuncio.quantidade <= 0 ? 'Produto sem estoque' : 'Anúncio pausado'}">Produto indisponível</h2>
+      <p id="unavailableDescription" class="unavailable-visually-hidden" th:text="${anuncio.quantidade == null or anuncio.quantidade <= 0 ? 'O vendedor precisa atualizar o estoque para liberar novas compras.' : 'O vendedor precisa reativar o anúncio para liberar novas compras.'}">Este produto não pode ser comprado no momento.</p>
+      <img class="unavailable-dialog-art" th:src="@{/Assets/Ilustracoes/produto-indisponivel-popup.svg(v='20261103-2')}" src="/Assets/Ilustracoes/produto-indisponivel-popup.svg?v=20261103-2" alt="">
+      <button class="unavailable-hotspot unavailable-hotspot-back" type="button" data-unavailable-close aria-label="Voltar para o anúncio"></button>
+      <a class="unavailable-hotspot unavailable-hotspot-products" th:href="@{/produtos}" href="/produtos" aria-label="Ver outros produtos"></a>
+    </section>
+  </div>
+
+</div>
+<script th:src="@{/Assets/JavaScript/produto.js(v='20261103-unavailable-popup-2')}" src="/Assets/JavaScript/produto.js?v=20261103-unavailable-popup-2" defer></script>
+<script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body>
+</html>

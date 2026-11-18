@@ -1,0 +1,340 @@
+@import url(/Assets/css/Global.css);
+
+body {
+    display: flex;
+    flex-direction: row;
+}
+
+/* TELA ESQUERDA */
+
+.TelaLado__esquerda {
+    height: 100vh;
+    width: 880px;
+    background-color: var(--BrancoCampus);
+}
+
+.Area__Logomarca {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 40px;
+    animation: fadeSlideDown 0.7s ease-out both;
+}
+
+.Logo {
+    height: 96px;
+    width: 96px;
+}
+
+.Logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Titulo__login {
+    font-size: 36px;
+    font-family: var(--FontePoppinsBold);
+    color: var(--VerdeCampus);
+}
+
+.Formulario__login {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    height: 650px;
+    width: 582px;
+    gap: 16px;
+    margin-top: 40px;
+}
+
+/* AJUSTE DE CAMADAS (Z-INDEX): Força as linhas superiores a sobreporem as inferiores */
+.Flex__NomeTurma {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.15s;
+    position: relative;
+    z-index: 5;
+}
+
+.Area__email {
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.3s;
+    position: relative;
+    z-index: 4;
+}
+
+.Flex__Senhas {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.45s;
+    position: relative;
+    z-index: 3;
+}
+
+.Area__nome, .Area__turma, .Area__email, .Area__senha, .Area__ConfirmSenha {
+    display: flex;
+    flex-direction: column;
+}
+
+/* CONTAINER RELATIVO PARA O BALÃO FICAR ANCORADO AO INPUT */
+.campo-relativo {
+    position: relative;
+    width: 100%;
+}
+
+/* INPUTS COM DIVISORIA E SELECTS */
+
+.Area__nome input, .Area__turma select {
+    height: 77px;
+    border-radius: 15px;
+    padding-left: 22px;
+    padding-right: 22px;
+    width: 275px;
+    outline: none;
+}
+
+.flex__iconInput {
+    height: 77px;
+    border: 1px solid var(--CinzaCampus);
+    border-radius: 15px;
+    padding-left: 22px;
+    padding-right: 22px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s ease;
+    width: 100%;
+}
+
+.flex__iconInputDivisoria, .Area__nome input, .Area__turma select {
+    height: 77px;
+    border: 1px solid var(--CinzaCampus);
+    border-radius: 15px;
+    padding-left: 22px;
+    padding-right: 22px;
+    background-color: white;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s ease;
+    width: 275px;
+}
+
+.flex__iconInput:focus-within, 
+.flex__iconInputDivisoria:focus-within, 
+.Area__nome input:focus-within, 
+.Area__turma select:focus-within {
+    border-color: var(--PretoCampus);
+}
+
+/* DESTAQUE DE ERRO NOS CAMPOS */
+
+
+
+.input-erro {
+    border-color: var(--VermelhoCampus) !important;
+}
+
+.icone {
+    width: 22px;
+    color: var(--PretoCampus);
+}
+
+#imgOlhoSenha, #imgOlhoConfirmSenha {
+    cursor: pointer;
+}
+
+/* INPUTS SEM DIVISORIA */
+
+.Area__email input, .Area__senha input, .Area__ConfirmSenha input {
+    width: 85%;
+    border: none;
+    outline: none;
+    font-family: var(--FontePoppinsRegular);
+    color: var(--PretoCampus);
+    background: transparent;
+}
+
+.Area__email input::placeholder, .Area__senha input::placeholder, .Area__turma select {
+    color: var(--CinzaCampus2);
+    font-family: var(--FontePoppinsRegular);
+}
+
+.Area__email label, .Area__senha label, .Area__ConfirmSenha label, .Area__nome label, .Area__turma label {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: var(--VerdeCampus);
+    font-family: var(--FontePoppinsBold);
+}
+
+#Mensagem__erroEmail{
+	animation: fadeSlideLeft 0.6s ease-out both;
+	    animation-delay: 0.3s;
+}
+
+/* BALÃO DE ALERTA: Mantido absoluto com z-index máximo para realizar a sobreposição */
+.balao-alerta {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 15px;
+    margin-top: 4px;
+    background-color: #ffffff;
+    border: 1px solid var(--VermelhoCampus);
+    color: var(--VermelhoCampus);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: var(--FontePoppinsRegular);
+    white-space: nowrap;
+    z-index: 99999 !important; /* Passa por cima dos labels seguintes */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+    align-items: center;
+}
+
+.balao-alerta::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 15px;
+    border-width: 0 5px 6px 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--VermelhoCampus) transparent;
+}
+
+.balao-alerta::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 16px;
+    border-width: 0 4px 5px 4px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+.Erros {
+    font-size: 14px;
+    color: var(--VermelhoCampus);
+    font-family: var(--FontePoppinsRegular);
+}
+
+.Botao__entrar {
+    height: 64px;
+    background-color: var(--VerdeCampus);
+    color: var(--BrancoCampus);
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-family: var(--FontePoppinsBold);
+    margin-top: 38px;
+    margin-bottom: 18px;
+    cursor: pointer;
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.6s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.Botao__entrar:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.08);
+    box-shadow: 0 8px 20px var(--CinzaCampus2);
+}
+
+.Botao__entrar:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--PretoCampus);
+}
+
+.PossuiConta {
+    display: flex;
+    justify-content: center;
+    font-family: var(--FontePoppinsRegular);
+    color: var(--PretoCampus);
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.72s;
+}
+
+.PossuiConta a {
+    color: var(--VermelhoCampus);
+    font-family: var(--FontePoppinsBold);
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+/* TELA DIREITA */
+
+.TelaLado__direita {
+    height: 100vh;
+    width: 1040px;
+    background-image: url('/Assets/Logos/Fundo\ lado\ Direito.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 98px;
+}
+
+.AreaTexto_principal, .AreaTexto_secundario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--BrancoCampus);
+}
+
+.AreaTexto_principal {
+    width: 462px;
+    height: 290px;
+    gap: 12px;
+    animation: fadeSlideRight 0.7s ease-out both;
+    animation-delay: 0.3s;
+}
+
+.AreaTexto_principal p {
+    font-size: 62px;
+    font-weight: bolder;
+    font-family: var(--FonteFatFrank);
+}
+
+.AreaTexto_secundario {
+    width: 374px;
+    height: 74px;
+    gap: 18px;
+    animation: fadeSlideRight 0.7s ease-out both;
+    animation-delay: 0.5s;
+    font-family: var(--FontePoppinsRegular);
+}
+
+.AreaTexto_secundario p {
+    font-size: 16px;
+    font-weight: lighter;
+}
+
+/* ANIMAÇÕES */
+
+@keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeSlideRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+}

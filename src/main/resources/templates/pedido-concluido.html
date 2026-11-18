@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedido registrado — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/pedido-concluido.css}" href="/Assets/css/pedido-concluido.css">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="order-success-page">
+  <main class="order-success">
+    <img class="order-success-art" th:src="@{/Assets/Icones/pedido-confirmado.svg}" src="/Assets/Icones/pedido-confirmado.svg" alt="">
+    <section class="order-success-content">
+      <span class="order-success-badge">Tudo certo</span>
+      <h1>Pedido registrado!</h1>
+      <p>Pedido <span th:text="${pedido.codigo}">CM-1042</span> • <span th:text="${'R$ ' + #numbers.formatDecimal(pedido.total, 1, 2, 'COMMA')}">R$ 28,00</span></p>
+      <p><span th:text="${pagamentoPresencial} ? 'O pagamento será realizado na retirada.' : 'O pagamento via Pix foi confirmado.'">O pagamento será realizado na retirada.</span> Converse com <span th:text="${pedido.vendedorNome != null ? pedido.vendedorNome : 'o vendedor'}">Ana</span> para combinar os detalhes.</p>
+      <a class="order-success-button" th:href="@{/agendamentos(criado=true)}">Acompanhar Agendamento</a>
+    </section>
+  </main>
+  <footer class="order-success-footer"><a th:href="@{/home}">Campus Marketplace</a></footer>
+</body>
+</html>
+

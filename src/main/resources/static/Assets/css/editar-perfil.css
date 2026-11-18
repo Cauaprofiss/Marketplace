@@ -1,0 +1,67 @@
+.edit-account-body .account-heading p{height:auto;margin:12px 0 0 5px;line-height:1.4}
+.edit-account-body .account-layout{min-height:690px}
+.edit-account-body .account-sidebar{position:sticky;top:20px}
+.edit-account-body .account-sidebar h2{margin-bottom:50px}
+.edit-account-body .account-sidebar .account-nav{margin-top:0}
+.edit-account-body .account-logout{margin-top:auto;cursor:pointer}
+.edit-account-body .edit-account-card{height:auto;min-height:690px;margin-top:0;padding-bottom:36px}
+.edit-account-body.has-scroll-reveal .scroll-reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .65s cubic-bezier(.22,1,.36,1)}
+.edit-account-body.has-scroll-reveal .scroll-reveal.is-visible{opacity:1;transform:translateY(0)}
+.edit-account-card>form>h2{margin:0 0 27px;color:var(--account-deep);font-family:var(--FontePoppinsBold);font-size:32px;line-height:1.2}
+.edit-account-details{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px;row-gap:21px}
+.edit-account-details .account-field>span{margin-bottom:8px}
+.edit-account-details input,.edit-account-details select,.edit-account-details textarea,.edit-password-grid input{width:100%;min-width:0;height:54px;padding:0 16px;border:1px solid var(--account-line);border-radius:14px;outline:0;background:#FFFDF8;color:var(--account-deep);font:14px var(--FontePoppinsRegular),Poppins,Arial,sans-serif;transition:border-color .18s ease,box-shadow .18s ease}
+.edit-account-details input,.edit-account-details select,.edit-password-grid input{font-size:18px}
+.edit-account-details input:focus,.edit-account-details select:focus,.edit-account-details textarea:focus,.edit-password-grid input:focus{border-color:var(--account-green);box-shadow:0 0 0 3px rgba(32,89,68,.1)}
+.edit-account-details .edit-account-bio{grid-column:1/-1}
+.edit-account-details textarea{height:auto;min-height:112px;padding:13px 16px;resize:vertical}
+.edit-account-card .divider{height:1px;margin:28px 0 24px;background:var(--account-line)}
+.edit-account-card .password-section>h2{margin:0 0 20px;color:var(--account-deep);font-family:var(--FontePoppinsBold);font-size:24px;line-height:1.2}
+.edit-account-card>form{display:flex;min-height:620px;flex-direction:column}
+.edit-password-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px;align-items:end}
+.edit-password-grid .password-field{position:relative;min-width:0}
+.edit-password-grid .password-field>a{position:absolute;top:0;right:0;color:var(--account-green);font-size:11px}
+.edit-password-grid .password-field input{padding-right:46px}
+.edit-password-grid .password-field i{position:absolute;right:15px;bottom:17px;width:20px;height:20px;color:var(--account-muted)}
+.edit-password-grid .password-field i svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.5}
+.edit-password-grid button,.edit-account-card .delete-account{min-height:48px;padding:0 22px;border:0;border-radius:13px;font:14px var(--FontePoppinsSemiBold),Poppins,Arial,sans-serif;cursor:pointer;transition:transform .18s ease,filter .18s ease}
+.edit-password-grid .password-actions{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.edit-password-grid .password-actions button{width:160px;height:48px;min-height:48px;margin:0}
+.edit-password-grid .update-password{background:var(--account-green);color:#FFFDF8}
+.edit-account-card .delete-account{background:#A92E26;color:#FFFDF8}
+.account-delete-modal .account-delete-info{border-color:var(--account-green);color:var(--account-green)}
+.account-delete-actions{grid-template-columns:1fr 1fr}
+.account-delete-actions form{min-width:0}
+.account-delete-actions form button{width:100%;cursor:pointer}
+.account-delete-confirm{border:1px solid #A92E26;background:transparent;color:#A92E26}
+.account-delete-confirm:hover{background:#F8E9E6}
+.edit-account-card .edit-save-profile{min-width:230px;height:54px;margin:26px 0 0 auto;padding:0 28px;border:0;border-radius:15px;background:var(--account-green);color:#FFFDF8;box-shadow:0 6px 0 rgba(23,57,47,.1);font:15px var(--FontePoppinsSemiBold),Poppins,Arial,sans-serif;cursor:pointer;transition:transform .18s ease,filter .18s ease}
+.edit-account-card .edit-save-profile:hover{filter:brightness(.96);transform:translateY(-1px)}
+.edit-password-grid button:hover,.edit-account-card .delete-account:hover{filter:brightness(.96);transform:translateY(-1px)}
+.edit-account-body .account-footer{margin-top:60px}
+@media(max-width:1050px){
+  .edit-account-body .account-sidebar{top:16px}
+  .edit-account-body .account-layout{min-height:0}
+  .edit-account-body .account-sidebar{height:650px}
+  .edit-account-body .edit-account-card{min-height:650px;padding:31px}
+  .edit-account-card>form{min-height:586px}
+  .edit-account-details{column-gap:22px;row-gap:18px}
+  .edit-account-details input,.edit-account-details select,.edit-password-grid input{font-size:15px}
+  .edit-account-body .account-footer{margin-top:48px}
+}
+@media(max-width:760px){
+  .edit-account-body .account-sidebar{position:static;top:auto}
+  .edit-account-body .account-layout{grid-template-columns:1fr}
+  .edit-account-body .account-sidebar{height:auto;min-height:620px}
+  .edit-account-body .edit-account-card{min-height:0;padding:28px 22px 32px}
+  .edit-account-card>form{min-height:0}
+  .edit-account-card>form>h2{font-size:28px}
+  .edit-account-details{grid-template-columns:1fr;gap:18px}
+  .edit-password-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+  .edit-password-grid .password-field{grid-column:1/-1}
+  .edit-account-details .edit-account-bio{grid-column:auto}
+  .edit-password-grid .password-actions{gap:10px}
+  .edit-password-grid .password-actions button{width:min(160px,calc(50% - 3px));padding-inline:8px}
+  .edit-account-body .account-footer{margin-top:48px}
+}
+@media(prefers-reduced-motion:reduce){.edit-account-body.has-scroll-reveal .scroll-reveal{opacity:1;transform:none;transition:none}}

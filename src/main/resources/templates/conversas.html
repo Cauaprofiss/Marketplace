@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversas — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/conversas.css(v='20261013-full-image')}" href="/Assets/css/conversas.css?v=20261013-full-image">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="chat-screen">
+<th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+<main class="chat-page">
+  <div th:if="${sucessoConversa != null}" th:text="${sucessoConversa}" class="campus-notice" data-campus-notice hidden role="status"></div>
+  <div th:if="${erroConversa != null}" th:text="${erroConversa}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+  <div class="conversation-layout">
+    <aside class="conversation-list" aria-label="Lista de conversas">
+      <div class="conversation-title">
+        <h1>Conversas</h1>
+        <span class="conversation-count" data-unread-count aria-label="Conversas não lidas">0</span>
+      </div>
+      <label class="conversation-search" for="conversationSearch">
+        <span class="ui-icon ui-icon-search" aria-hidden="true"></span>
+        <input type="search" id="conversationSearch" placeholder="Buscar conversa" autocomplete="off">
+      </label>
+      <div class="conversation-filters" role="group" aria-label="Filtrar conversas">
+        <button class="active" type="button" data-conversation-filter="all">Todas</button>
+        <button type="button" data-conversation-filter="unread">Não lidas</button>
+        <button type="button" data-conversation-filter="product">Pedidos</button>
+      </div>
+      <div class="conversation-items" id="conversationItems">
+        <a th:each="conversa : ${conversas}" th:href="@{/conversas(id=${conversa.id})}"
+           class="conversation-item"
+           th:classappend="${(conversaAtual != null and conversaAtual.id == conversa.id ? ' active' : '') + (conversa.naoLida ? ' unread' : '')}"
+           th:attr="data-unread=${conversa.naoLida},data-product=${conversa.anuncio != null}">
+          <span class="conversation-avatar">
+            <img th:if="${conversa.outroUsuario != null and conversa.outroUsuario.imagem != null}"
+                 th:src="@{${conversa.outroUsuario.imagem}}" th:alt="${'Foto de ' + conversa.outroUsuario.nome}">
+            <span th:unless="${conversa.outroUsuario != null and conversa.outroUsuario.imagem != null}"
+                  th:text="${conversa.iniciais}">AS</span>
+          </span>
+          <span class="conversation-data">
+            <strong class="conversation-name" th:text="${conversa.outroUsuario.nome}">Ana Souza</strong>
+            <span class="conversation-preview" th:text="${conversa.ultimaMensagem}">Oi! O produto ainda está disponível?</span>
+            <span class="conversation-status" th:if="${conversa.online}">online no câmpus</span>
+            <time class="conversation-time" th:if="${conversa.tempo}" th:text="${conversa.tempo}">há 3 min</time>
+          </span>
+          <span class="unread-dot" th:if="${conversa.naoLida}" aria-label="Mensagem não lida"></span>
+        </a>
+        <div class="conversation-empty" th:if="${#lists.isEmpty(conversas)}">
+          <span class="ui-icon ui-icon-message" aria-hidden="true"></span>
+          <span>Nenhuma conversa encontrada.</span>
+        </div>
+        <div class="conversation-empty filtered-empty" hidden data-filter-empty>Nenhuma conversa neste filtro.</div>
+      </div>
+    </aside>
+
+    <section class="chat" th:if="${conversaAtual != null}" aria-label="Conversa atual">
+      <header class="chat-header">
+        <span class="chat-avatar">
+          <img th:if="${conversaAtual.outroUsuario != null and conversaAtual.outroUsuario.imagem != null}"
+               th:src="@{${conversaAtual.outroUsuario.imagem}}" th:alt="${'Foto de ' + conversaAtual.outroUsuario.nome}">
+          <span th:unless="${conversaAtual.outroUsuario != null and conversaAtual.outroUsuario.imagem != null}"
+                th:text="${conversaAtual.iniciais}">AS</span>
+        </span>
+        <div class="chat-user">
+          <strong class="chat-user-name" th:text="${conversaAtual.outroUsuario.nome}">Ana Souza</strong>
+          <span class="chat-user-status" th:if="${conversaAtual.online}"><i></i> online no câmpus</span>
+          <span class="chat-user-status offline" th:unless="${conversaAtual.online}">Conversa pelo Campus MarketPlace</span>
+        </div>
+        <div class="chat-header-actions">
+          <a class="chat-header-button" th:href="@{/vendedores/{id}(id=${conversaAtual.outroUsuario.idUsuario})}" aria-label="Ver perfil do usuário">
+            <span class="ui-icon ui-icon-user" aria-hidden="true"></span>
+          </a>
+          <button class="chat-header-button" type="button" aria-label="Mais opções" aria-expanded="false" data-chat-menu-toggle>
+            <span class="ui-icon ui-icon-more" aria-hidden="true"></span>
+          </button>
+          <div class="chat-options" data-chat-menu hidden>
+            <button type="button" class="chat-option danger" data-delete-conversation-open>
+              <span class="ui-icon ui-icon-trash" aria-hidden="true"></span><span>Excluir conversa</span>
+            </button>
+            <a class="chat-option" th:if="${idPedidoAvaliavel != null}"
+               th:href="@{/compras/{id}/avaliar-vendedor(id=${idPedidoAvaliavel})}">
+              <span class="ui-icon ui-icon-star" aria-hidden="true"></span><span>Avaliar vendedor</span>
+            </a>
+            <span class="chat-option disabled" th:unless="${idPedidoAvaliavel != null}"
+                  title="Disponível para o comprador após a conclusão da entrega">
+              <span class="ui-icon ui-icon-star" aria-hidden="true"></span><span>Avaliar vendedor<small>Disponível após a entrega</small></span>
+            </span>
+          </div>
+        </div>
+      </header>
+      <div class="messages" id="messagesContainer" aria-live="polite">
+        <div th:each="mensagem : ${mensagens}" class="message-row"
+             th:classappend="${mensagem.remetente.idUsuario == session.usuarioLogado.idUsuario} ? ' outgoing' : ' incoming'">
+          <div class="message">
+            <span class="message-copy" th:text="${mensagem.conteudo}">Oi! O produto ainda está disponível?</span>
+            <time class="message-time" th:text="${#temporals.format(mensagem.dataEnvio, 'HH:mm')}">10:21</time>
+          </div>
+        </div>
+        <div class="messages-empty" th:if="${#lists.isEmpty(mensagens)}">Comece a conversa enviando uma mensagem.</div>
+      </div>
+      <form class="message-form" th:action="@{/conversas/mensagem}" method="post">
+        <input type="hidden" name="idConversa" th:value="${conversaAtual.id}">
+        <div class="message-input-wrapper">
+          <span class="attachment-icon ui-icon ui-icon-image" aria-hidden="true"></span>
+          <label class="sr-only" for="messageContent">Escreva uma mensagem</label>
+          <input class="message-input" id="messageContent" type="text" name="conteudo" placeholder="Escreva uma mensagem..." autocomplete="off" maxlength="2000" required>
+          <button class="send-button" type="submit" aria-label="Enviar mensagem"><span class="ui-icon ui-icon-arrow-right" aria-hidden="true"></span></button>
+        </div>
+      </form>
+    </section>
+
+    <section class="chat chat-unselected" th:unless="${conversaAtual != null}">
+      <span class="ui-icon ui-icon-message" aria-hidden="true"></span>
+      <strong>Selecione uma conversa</strong><span>Escolha uma pessoa na lista para visualizar as mensagens.</span>
+    </section>
+
+    <aside class="product-panel" th:if="${conversaAtual != null and conversaAtual.anuncio != null}">
+      <div class="product-image">
+        <img th:if="${conversaAtual.anuncio.fotoUrl != null}" th:src="@{${conversaAtual.anuncio.fotoUrl}}" th:alt="${conversaAtual.anuncio.nome}">
+        <span class="product-placeholder" th:unless="${conversaAtual.anuncio.fotoUrl != null}"><span class="ui-icon ui-icon-package" aria-hidden="true"></span></span>
+      </div>
+      <div class="product-category-row">
+        <span class="product-category" th:text="${conversaAtual.anuncio.categoria != null ? conversaAtual.anuncio.categoria.nome : 'Produto'}">Produto</span>
+        <span class="product-stock" th:text="${conversaAtual.anuncio.quantidade != null ? conversaAtual.anuncio.quantidade + ' disponíveis' : 'Consulte a disponibilidade'}">12 disponíveis</span>
+      </div>
+      <div class="product-price" th:text="${'R$ ' + #numbers.formatDecimal(conversaAtual.anuncio.preco, 1, 2, 'COMMA')}">R$ 12,00</div>
+      <h2 class="product-name" th:text="${conversaAtual.anuncio.nome}">Produto anunciado</h2>
+      <p class="product-description" th:text="${conversaAtual.anuncio.descricao != null and !#strings.isEmpty(conversaAtual.anuncio.descricao) ? conversaAtual.anuncio.descricao : 'Converse com o vendedor para saber mais sobre este produto.'}">Descrição do anúncio.</p>
+      <div class="product-safe-box">
+        <span class="ui-icon ui-icon-check-circle" aria-hidden="true"></span>
+        <div><strong>Negocie com segurança</strong><span>Combine pagamento e retirada pelos canais do Campus MarketPlace.</span></div>
+      </div>
+      <a class="view-product" th:href="@{/produtos/{id}(id=${conversaAtual.anuncio.idProduto})}">Ver anúncio</a>
+    </aside>
+
+    <aside class="product-panel product-panel-empty" th:unless="${conversaAtual != null and conversaAtual.anuncio != null}">
+      <span class="ui-icon ui-icon-package" aria-hidden="true"></span>
+      <span>Nenhum anúncio vinculado a esta conversa.</span>
+    </aside>
+  </div>
+</main>
+<div class="conversation-delete-overlay" data-delete-conversation-modal aria-hidden="true"
+     th:if="${conversaAtual != null}">
+  <section class="conversation-delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-conversation-title">
+    <button class="conversation-delete-close" type="button" aria-label="Fechar" data-delete-conversation-close>×</button>
+    <span class="delete-modal-icon"><span class="ui-icon ui-icon-trash" aria-hidden="true"></span></span>
+    <h2 id="delete-conversation-title">Excluir esta conversa?</h2>
+    <p>As mensagens serão apagadas definitivamente para você e para a outra pessoa.</p>
+    <div class="conversation-delete-actions">
+      <button type="button" class="delete-cancel" data-delete-conversation-cancel>Cancelar</button>
+      <form th:action="@{/conversas/{id}/excluir(id=${conversaAtual.id})}" method="post">
+        <button type="submit" class="delete-confirm">Excluir conversa</button>
+      </form>
+    </div>
+  </section>
+</div>
+<script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+<script th:src="@{/Assets/JavaScript/conversas.js}" src="/Assets/JavaScript/conversas.js"></script>
+</body>
+</html>
+

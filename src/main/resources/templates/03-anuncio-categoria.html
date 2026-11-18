@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Categoria do anúncio - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/anuncio-wizard.css(v='20260923-figma-wizard')}" href="/Assets/css/anuncio-wizard.css?v=20260923-figma-wizard">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="wizard-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="wizard-main">
+    <div class="wizard-stepper" style="--progress:33.2%">
+      <div class="wizard-stepper-progress"></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">1</div><span>Início</span></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">2</div><span>Fotos</span></div>
+      <div class="wizard-step is-active"><div class="wizard-step-circle">3</div><span>Categoria</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">4</div><span>Informações</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">5</div><span>Valor</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">6</div><span>Publicar</span></div>
+    </div>
+
+    <div class="wizard-heading">
+      <h1>Selecionar categoria</h1>
+      <p>Ajude as pessoas a encontrar seu produto mais rápido.</p>
+    </div>
+
+    <form class="wizard-flow-form" method="post" th:action="@{/anuncios/novo/categoria}">
+      <input type="hidden" name="idProduto" th:value="${idProduto}">
+      <input type="hidden" id="idCategoria" name="idCategoria">
+      <section class="wizard-card wizard-category-card">
+        <div th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+        <div class="category-layout">
+          <div class="category-main-column">
+            <h2>Qual categoria representa melhor o produto?</h2>
+            <p class="wizard-intro">Escolha uma opção para organizar a vitrine.</p>
+            <div class="category-grid" id="categoryGrid" th:attr="data-atual=${anuncio.idCategoria != null ? anuncio.idCategoria : ''}">
+              <button class="category-option" type="button" th:each="cat : ${categorias}"
+                      th:classappend="${cat.nome == 'Doces e alimentos'} ? ' category-food' : (${cat.nome == 'Artesanato'} ? ' category-craft' : (${cat.nome == 'Eletrônicos'} ? ' category-electronics' : ' category-books'))"
+                      th:attr="data-id=${cat.idCategoria},data-default=${cat.nome == 'Doces e alimentos'}">
+                <span class="wizard-radio"></span>
+                <span class="category-copy">
+                  <strong th:text="${cat.nome}">Categoria</strong>
+                  <small th:switch="${cat.nome}">
+                    <span th:case="'Doces e alimentos'">Bolos, salgados e encomendas</span>
+                    <span th:case="'Artesanato'">Itens feitos à mão</span>
+                    <span th:case="'Eletrônicos'">Acessórios e equipamentos</span>
+                    <span th:case="'Livros e apostilas'">Livros, apostilas e materiais de estudo</span>
+                    <span th:case="'Bebidas'">Sucos, cafés e outras bebidas</span>
+                    <span th:case="'Outros'">Produtos que não se encaixam nas demais categorias</span>
+                    <span th:case="*"></span>
+                  </small>
+                </span>
+              </button>
+            </div>
+            <p th:if="${categorias == null or categorias.isEmpty()}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert">Nenhuma categoria cadastrada.</p>
+          </div>
+          <aside class="category-illustration"><img src="/Assets/Ilustracoes/categoria-anuncio.svg" alt="Pessoa organizando produtos por categoria"></aside>
+        </div>
+      </section>
+      <div class="wizard-actions">
+        <a class="wizard-button wizard-button-secondary" th:href="@{/anuncios/novo/fotos(idProduto=${idProduto})}">Voltar</a>
+        <button class="wizard-button wizard-button-primary" type="submit">Continuar</button>
+      </div>
+    </form>
+  </main>
+  <footer class="wizard-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script>
+    (() => {
+      const grid = document.getElementById('categoryGrid');
+      const hidden = document.getElementById('idCategoria');
+      const options = [...grid.querySelectorAll('.category-option')];
+      const select = option => {
+        if (!option) return;
+        options.forEach(item => item.classList.remove('is-selected'));
+        option.classList.add('is-selected');
+        hidden.value = option.dataset.id;
+      };
+      options.forEach(option => option.addEventListener('click', () => select(option)));
+      select(options.find(option => option.dataset.id === grid.dataset.atual) || options.find(option => option.dataset.default === 'true') || options[0]);
+    })();
+  </script>
+</body>
+</html>
+

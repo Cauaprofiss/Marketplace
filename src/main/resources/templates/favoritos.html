@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Favoritos - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/favoritos.css(v='20261103-home-cards-3')}" href="/Assets/css/favoritos.css?v=20261103-home-cards-3">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="favorites-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="favorites-main">
+    <header class="favorites-heading">
+      <div>
+        <span>Campus Marketplace</span>
+        <h1>Favoritos</h1>
+        <p>Produtos salvos para comparar ou comprar depois.</p>
+      </div>
+      <strong class="favorites-count" data-favorites-count
+              th:text="${(produtos != null ? #lists.size(produtos) : 0) + ((produtos != null and #lists.size(produtos) == 1) ? ' produto' : ' produtos')}">4 produtos</strong>
+    </header>
+
+    <section class="favorites-grid" data-favorites-grid
+             th:classappend="${produtos == null or #lists.isEmpty(produtos)} ? ' is-empty' : ''">
+      <article class="favorite-product" th:each="produto : ${produtos}"
+               th:attr="data-favorite-card=${produto.idProduto}">
+        <a class="favorite-product-link" th:href="@{/produtos/{id}(id=${produto.idProduto})}"
+           th:attr="aria-label=${'Ver ' + produto.nome}"></a>
+
+        <div class="favorite-product-image">
+          <img th:if="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+               th:src="@{${produto.fotoUrl}}" th:alt="${produto.nome}">
+          <svg th:unless="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+               class="favorite-image-placeholder" viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="5" y="8" width="54" height="48" rx="8"/>
+            <circle cx="23" cy="25" r="6"/><path d="m11 48 14-14 10 9 7-7 11 12"/>
+          </svg>
+          <button class="favorite-remove" type="button"
+                  th:attr="data-product-id=${produto.idProduto},aria-label=${'Remover ' + produto.nome + ' dos favoritos'}"
+                  title="Remover dos favoritos">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>
+          </button>
+        </div>
+
+        <div class="favorite-product-copy">
+          <h2 th:text="${produto.nome}">Bolo de chocolate</h2>
+          <p><span aria-hidden="true"></span><span th:text="${produto.usuario != null ? produto.usuario.nome : 'Aluno IFSP'}">Aluno IFSP</span> · <span th:text="${produto.status != null and produto.status.name() == 'disponivel' ? 'disponível' : 'indisponível'}">disponível</span></p>
+        </div>
+
+        <div class="favorite-product-price">
+          <strong th:text="${produto.preco != null ? 'R$ ' + #numbers.formatDecimal(produto.preco,1,2,'COMMA') : 'Consultar'}">R$ 12,00</strong>
+        </div>
+      </article>
+
+      <section class="favorites-empty" data-favorites-empty
+               th:hidden="${produtos != null and !#lists.isEmpty(produtos)}">
+        <div class="favorites-empty-heart" aria-hidden="true">♡</div>
+        <h2>Sua lista está vazia</h2>
+        <p>Toque no coração de um anúncio para salvá-lo aqui.</p>
+        <a th:href="@{/produtos}" href="/produtos">Explorar produtos</a>
+      </section>
+    </section>
+
+    <section class="favorites-explore" aria-labelledby="favorites-explore-title">
+      <div>
+        <span>Escolhas do câmpus</span>
+        <h2 id="favorites-explore-title">Continue explorando a vitrine</h2>
+        <p>Compare preço, disponibilidade e retirada sem perder seus favoritos.</p>
+      </div>
+      <a th:href="@{/produtos}" href="/produtos">Explorar produtos</a>
+    </section>
+  </main>
+
+  <footer class="favorites-footer">
+    <span>Campus Marketplace • IFSP São Miguel Paulista</span>
+    <span>© 2026</span>
+  </footer>
+
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/favoritos.js}" src="/Assets/JavaScript/favoritos.js"></script>
+</body>
+</html>
+

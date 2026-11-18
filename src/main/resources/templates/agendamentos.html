@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus agendamentos — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/agendamentos.css}" href="/Assets/css/agendamentos.css">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="schedule-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="schedule-main">
+    <header class="schedule-heading">
+      <span class="schedule-heading-badge"><span aria-hidden="true"></span> Seus encontros no campus</span>
+      <h1>Seu próximo encontro<br>no campus</h1>
+      <p>Acompanhe local, horário e ações do agendamento com mais<br class="desktop-break"> clareza — tudo pronto para a retirada acontecer sem desencontro.</p>
+    </header>
+
+    <nav class="schedule-tabs" aria-label="Filtros dos agendamentos">
+      <button class="schedule-tab active" type="button" data-statuses="pendente,confirmado" data-role="all" aria-pressed="true">Agendados <span class="schedule-count">0</span></button>
+      <button class="schedule-tab" type="button" data-statuses="concluido" data-role="all" aria-pressed="false">Concluídos <span class="schedule-count">0</span></button>
+      <button class="schedule-tab" type="button" data-statuses="cancelado" data-role="all" aria-pressed="false">Cancelados <span class="schedule-count">0</span></button>
+      <button class="schedule-tab" type="button" data-statuses="pendente,confirmado,concluido,cancelado" data-role="seller" aria-pressed="false">Vendas <span class="schedule-count">0</span></button>
+    </nav>
+
+    <div th:if="${erroAgendamento != null}" th:text="${erroAgendamento}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+    <div class="campus-notice campus-notice--toast" data-campus-notice hidden role="status" th:if="${sucessoAgendamento != null}" th:text="${sucessoAgendamento}"></div>
+
+    <div class="schedule-layout">
+      <section class="schedule-list" aria-live="polite">
+        <article class="appointment-card"
+                 th:each="ag : ${comoComprador}"
+                 th:id="${'agendamento-' + ag.idAgendamento}"
+                 th:classappend="${ag.status.name() == 'cancelado'} ? ' is-cancelled' : ''"
+                 th:attr="data-status=${ag.status.name()},data-role='buyer'">
+          <span class="appointment-status"
+                th:classappend="${ag.status.name() == 'cancelado'} ? ' is-cancelled' : ''"
+                th:text="${ag.status.name() == 'pendente' or ag.status.name() == 'confirmado'} ? 'Agendado' : (${ag.status.name() == 'concluido'} ? 'Concluído' : 'Cancelado')">Agendado</span>
+
+          <h2 th:text="${ag.tipo.label + ' com ' + ag.vendedor.nome}">Retirada com Ana Lima</h2>
+          <p class="appointment-meta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+            <strong th:text="${#temporals.format(ag.dataAgendada, 'dd MMM yyyy') + ' • ' + (ag.horario.toString() == '09:40' ? 'Intervalo manhã · 09:40 - 10:00' : (ag.horario.toString() == '15:50' ? 'Intervalo tarde · 15:50 - 16:10' : #temporals.format(ag.horario, 'HH:mm')))}">14 set. 2026 • Intervalo manhã</strong>
+          </p>
+          <p class="appointment-meta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span th:text="${ag.localRetirada != null ? ag.localRetirada.label : 'A combinar'}">Entrada da biblioteca</span>
+          </p>
+
+          <p class="appointment-meta" th:if="${!#strings.isEmpty(ag.produtosResumo)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9M8 5.2l8 4.5v5"/></svg>
+            <span th:text="${ag.produtosResumo}">Bolo de chocolate</span>
+          </p>
+
+          <div class="appointment-actions" th:if="${ag.status.name() != 'cancelado' and ag.status.name() != 'concluido'}">
+            <a class="schedule-action primary" th:if="${!ag.horarioPassou}" th:href="@{/agendamentos/{id}/reagendar(id=${ag.idAgendamento})}">Reagendar</a>
+            <a class="schedule-action" th:href="@{/compras/{id}(id=${ag.compraVendedor.idCompraVendedor})}">Ver pedido</a>
+            <form th:if="${ag.horarioPassou}" th:action="@{/agendamentos/{id}/confirmar-retirada(id=${ag.idAgendamento})}" method="post" style="display:contents"><button class="schedule-action primary" type="submit">Confirmar retirada</button></form>
+            <button class="schedule-action cancel open-report-btn" type="button" th:if="${ag.horarioPassou}" th:attr="data-id=${ag.idAgendamento}">Não recebi</button>
+            <button class="schedule-action cancel open-cancel-btn" type="button"
+                    th:if="${!ag.horarioPassou}"
+                    th:attr="data-id=${ag.idAgendamento},data-person=${ag.vendedor.nome}">Cancelar</button>
+          </div>
+        </article>
+
+        <article class="appointment-card"
+                 th:each="ag : ${comoVendedor}"
+                 th:id="${'agendamento-' + ag.idAgendamento}"
+                 th:classappend="${ag.status.name() == 'cancelado'} ? ' is-cancelled' : ''"
+                 th:attr="data-status=${ag.status.name()},data-role='seller'">
+          <span class="appointment-status"
+                th:classappend="${ag.status.name() == 'cancelado'} ? ' is-cancelled' : ''"
+                th:text="${ag.status.name() == 'pendente' or ag.status.name() == 'confirmado'} ? 'Agendado' : (${ag.status.name() == 'concluido'} ? 'Concluído' : 'Cancelado')">Agendado</span>
+
+          <h2 th:text="${ag.tipo.label + ' com ' + ag.comprador.nome}">Retirada com comprador</h2>
+          <p class="appointment-meta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+            <strong th:text="${#temporals.format(ag.dataAgendada, 'dd MMM yyyy') + ' • ' + (ag.horario.toString() == '09:40' ? 'Intervalo manhã · 09:40 - 10:00' : (ag.horario.toString() == '15:50' ? 'Intervalo tarde · 15:50 - 16:10' : #temporals.format(ag.horario, 'HH:mm')))}">14 set. 2026 • Intervalo manhã</strong>
+          </p>
+          <p class="appointment-meta">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span th:text="${ag.localRetirada != null ? ag.localRetirada.label : 'A combinar'}">Entrada da biblioteca</span>
+          </p>
+
+          <p class="appointment-meta" th:if="${!#strings.isEmpty(ag.produtosResumo)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9M8 5.2l8 4.5v5"/></svg>
+            <span th:text="${ag.produtosResumo}">Bolo de chocolate</span>
+          </p>
+
+          <div class="appointment-actions" th:if="${ag.status.name() != 'cancelado' and ag.status.name() != 'concluido'}">
+            <a class="schedule-action primary" th:if="${!ag.horarioPassou}" th:href="@{/agendamentos/{id}/reagendar(id=${ag.idAgendamento})}">Reagendar</a>
+            <a class="schedule-action" th:href="@{/vendas/{id}(id=${ag.compraVendedor.idCompraVendedor})}">Ver venda</a>
+            <form th:if="${ag.horarioPassou}" th:action="@{/agendamentos/{id}/nao-compareceu(id=${ag.idAgendamento})}" method="post" style="display:contents"><button class="schedule-action cancel" type="submit">Não compareceu</button></form>
+            <button class="schedule-action cancel open-cancel-btn" type="button"
+                    th:if="${!ag.horarioPassou}"
+                    th:attr="data-id=${ag.idAgendamento},data-person=${ag.comprador.nome}">Cancelar</button>
+          </div>
+        </article>
+
+        <div class="schedule-empty" id="scheduleEmpty"
+             th:classappend="${#lists.isEmpty(comoComprador) and #lists.isEmpty(comoVendedor)} ? ' visible' : ''">
+          Nenhum agendamento encontrado neste filtro.
+        </div>
+      </section>
+
+      <aside class="schedule-visual" aria-hidden="true">
+        <img th:src="@{/Assets/Icones/agendamento-calendario.svg}" src="/Assets/Icones/agendamento-calendario.svg" alt="">
+      </aside>
+    </div>
+  </main>
+
+
+  
+
+  <div class="schedule-modal-backdrop" id="cancelModal" aria-hidden="true">
+    <section class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="cancelTitle">
+      <button class="schedule-modal-close" type="button" aria-label="Fechar" data-cancel-close>×</button>
+      <span class="schedule-modal-alert" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17.2v.1"/></svg></span>
+      <h2 id="cancelTitle">Cancelar esta retirada?</h2>
+      <p id="cancelDesc">A outra pessoa será informada. Você poderá combinar um novo horário pelo chat.</p>
+      <form id="cancelForm" method="post">
+        <div class="schedule-modal-actions">
+          <button class="schedule-modal-confirm" type="submit">Cancelar agendamento</button>
+          <button class="schedule-modal-keep" type="button" data-cancel-keep>Manter agendamento</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/agendamentos.js}" src="/Assets/JavaScript/agendamentos.js"></script>
+</body>
+</html>
+

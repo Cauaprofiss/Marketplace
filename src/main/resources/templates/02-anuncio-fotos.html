@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fotos do anúncio - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/anuncio-wizard.css(v='20260923-figma-wizard')}" href="/Assets/css/anuncio-wizard.css?v=20260923-figma-wizard">
+  <link rel="stylesheet" th:href="@{/Assets/css/anuncio-fotos.css(v='20261025-badge-top-left')}" href="/Assets/css/anuncio-fotos.css?v=20261025-badge-top-left">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="wizard-page photos-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="wizard-main">
+    <div class="wizard-stepper" style="--progress:16.6%">
+      <div class="wizard-stepper-progress"></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">1</div><span>Início</span></div>
+      <div class="wizard-step is-active"><div class="wizard-step-circle">2</div><span>Fotos</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">3</div><span>Categoria</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">4</div><span>Informações</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">5</div><span>Valor</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">6</div><span>Publicar</span></div>
+    </div>
+
+    <div class="wizard-heading">
+      <h1>Revisar fotos do produto</h1>
+      <p>As imagens ficam contidas e organizadas em galeria.</p>
+    </div>
+
+    <form class="wizard-flow-form" method="post" th:action="@{/anuncios/novo/fotos(idProduto=${idProduto})}" enctype="multipart/form-data">
+      <input type="hidden" name="idProduto" th:value="${idProduto}">
+      <section class="wizard-card wizard-photo-card">
+        <div th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+        <h2>Revisar fotos</h2>
+        <p class="wizard-intro">Escolha a imagem principal e organize os outros ângulos.</p>
+        <div class="photo-slots" id="additionalGrid">
+          <div class="principal-photo">
+            <span class="principal-badge">Foto principal</span>
+            <label class="upload-box" id="uploadBox" for="fileInput" th:classappend="${anuncio.urlsFotos != null and !anuncio.urlsFotos.isEmpty()} ? ' has-image' : ''">
+              <div class="upload-copy">
+                <div class="upload-plus">+</div>
+                <strong>Arraste a foto principal ou clique para selecionar</strong>
+                <small>PNG, JPG ou WEBP • até 8 MB</small>
+                <span class="choose-file" th:text="${anuncio.urlsFotos != null and !anuncio.urlsFotos.isEmpty()} ? 'Trocar foto' : 'Escolher arquivo'">Escolher arquivo</span>
+              </div>
+              <img th:if="${anuncio.urlsFotos != null and !anuncio.urlsFotos.isEmpty()}" id="previewImage"
+                   th:src="@{${anuncio.urlsFotos[0]}}" alt="Foto principal do produto">
+              <input id="fileInput" name="fotoPrincipal" type="file" accept="image/png,image/jpeg,image/webp" hidden
+                     th:required="${anuncio.urlsFotos == null or anuncio.urlsFotos.isEmpty()}">
+            </label>
+          </div>
+          <div class="photo-item" th:each="i : ${#numbers.sequence(0,2)}"
+               th:with="saved=${extras != null and extras.size() > i}"
+               th:attr="data-saved-url=${saved ? extras[i] : ''}">
+              <div class="additional-photo" th:classappend="${saved} ? ' is-filled' : ''">
+                <label th:aria-label="${'Selecionar foto adicional ' + (i + 1)}">
+                  <img th:if="${saved}" th:src="@{${extras[i]}}" alt="Foto adicional">
+                  <input type="file" name="fotosAdicionais" accept="image/png,image/jpeg,image/webp" hidden>
+                </label>
+              </div>
+              <button class="photo-remove" type="button" th:hidden="${!saved}" th:aria-label="${'Excluir foto adicional ' + (i + 1)}">Excluir</button>
+          </div>
+          <button class="photo-add" id="addPhoto" type="button" aria-label="Adicionar foto"><span aria-hidden="true">+</span></button>
+        </div>
+      </section>
+      <div class="wizard-actions">
+        <a class="wizard-button wizard-button-secondary" th:href="@{/anuncios/novo(voltar=true)}">Voltar</a>
+        <button class="wizard-button wizard-button-primary" type="submit">Continuar</button>
+      </div>
+    </form>
+  </main>
+  <footer class="wizard-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/anuncio-fotos.js(v='20261013-1')}" src="/Assets/JavaScript/anuncio-fotos.js?v=20261013-1" defer></script>
+</body>
+</html>
+

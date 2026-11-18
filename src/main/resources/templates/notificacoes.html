@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificações — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <style>
+    body{min-height:100vh;background:var(--cream);display:grid;place-items:center;padding:32px}
+    .notifications-screen{width:min(420px,100%);max-height:calc(100vh - 64px);padding:28px 24px 24px;border-radius:12px;background:var(--paper);box-shadow:0 12px 28px rgba(10,43,33,.18);color:var(--green);display:flex;flex-direction:column}
+    .notifications-screen .notification-header{margin-bottom:24px}
+    .notifications-screen .notification-header a{display:grid;width:20px;height:20px;place-items:center}
+    .notifications-screen .notification-header svg{width:15px;height:15px;fill:none;stroke:var(--green);stroke-width:1.6;stroke-linecap:round}
+    .notifications-screen .notification-list{overflow-y:auto;margin:0;padding-right:3px}
+    .notifications-screen .notification-entry{height:auto;min-height:84px}
+    .notification-read-form{margin:0}
+    .notification-read-form button{width:100%;padding:0;border:0;background:transparent;text-align:inherit;font:inherit;color:inherit;cursor:pointer}
+    .notifications-empty{padding:70px 12px;text-align:center;color:var(--muted);font-size:12px}
+    .mark-all{display:flex;align-items:center;justify-content:center;width:100%;height:34px;margin-top:18px;border:0;border-radius:5px;background:var(--green);color:#fff;font-family:var(--FontePoppinsBold);font-size:10px;cursor:pointer}
+  </style>
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body>
+  <main class="notifications-screen">
+    <div class="notification-header">
+      <strong>Notificações</strong>
+      <a th:href="@{/home}" href="/home" aria-label="Fechar notificações"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
+    </div>
+
+    <div class="notifications-empty" th:if="${todasNotificacoes == null or #lists.isEmpty(todasNotificacoes)}">Você não possui novas notificações.</div>
+
+    <div class="notification-list" th:unless="${todasNotificacoes == null or #lists.isEmpty(todasNotificacoes)}">
+      <form class="notification-read-form" th:each="notificacao : ${todasNotificacoes}" th:action="@{/notificacoes/{id}/marcar-lida(id=${notificacao.idNotificacao})}" method="post">
+        <button type="submit">
+          <article class="notification-entry" th:classappend="${notificacao.lida} ? ' read' : ' unread'">
+            <span class="notification-entry-icon" th:switch="${notificacao.tipoExibicao.name()}" aria-hidden="true">
+              <svg th:case="'mensagem'" viewBox="0 0 24 24"><path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v6a3.5 3.5 0 0 1-3.5 3.5H10l-4.5 3v-3.6A3.5 3.5 0 0 1 5 12.5z"/><path d="M8 8h8M8 11h5"/></svg>
+              <svg th:case="'pedido'" viewBox="0 0 24 24"><path d="m12 3 7 4-7 4-7-4 7-4Z"/><path d="m5 7 7 4 7-4v9l-7 4-7-4V7Z"/><path d="M12 11v9"/></svg>
+              <svg th:case="'pagamento'" viewBox="0 0 24 24"><path d="m12 3 7 4-7 4-7-4 7-4Z"/><path d="m5 7 7 4 7-4v9l-7 4-7-4V7Z"/><path d="M12 11v9"/></svg>
+              <svg th:case="'venda'" viewBox="0 0 24 24"><path d="M5 8h14l1 12H4L5 8Z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg>
+              <svg th:case="'agendamento'" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+              <svg th:case="'anuncio'" viewBox="0 0 24 24"><path d="m12 3 7 4-7 4-7-4 7-4Z"/><path d="m5 7 7 4 7-4v9l-7 4-7-4V7Z"/></svg>
+              <svg th:case="'denuncia'" viewBox="0 0 24 24"><path d="M6 21V4M6 5h11l-2 4 2 4H6"/></svg>
+              <svg th:case="*" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            </span>
+            <span class="notification-entry-copy"><strong th:text="${notificacao.titulo}">Nova mensagem</strong><p th:text="${notificacao.mensagem}">Ana respondeu sobre sua retirada.</p></span>
+          </article>
+        </button>
+      </form>
+    </div>
+
+    <form th:if="${todasNotificacoes != null and !#lists.isEmpty(todasNotificacoes)}" th:action="@{/notificacoes/marcar-todas-lidas}" method="post"><button class="mark-all" type="submit">Marcar todas como lidas</button></form>
+  </main>
+</body>
+</html>
+

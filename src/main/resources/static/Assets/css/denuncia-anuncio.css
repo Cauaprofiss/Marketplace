@@ -1,0 +1,94 @@
+@import url('/Assets/css/Global.css');
+
+:root{
+  --report-green:#205944;
+  --report-deep:#17392f;
+  --report-cream:#f3f0df;
+  --report-paper:#fffdf6;
+  --report-red:#a92e26;
+  --report-muted:#607168;
+  --report-line:#d3dacd;
+}
+
+*{box-sizing:border-box}
+.report-body{margin:0;background:var(--report-cream);color:var(--report-deep);font-family:var(--FontePoppinsRegular),Poppins,Arial,sans-serif}
+.report-body button,.report-body input,.report-body textarea{font:inherit}
+.report-shell{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+.report-page{width:min(1518px,calc(100% - 48px));min-height:calc(100vh - 96px);margin:0 auto;padding:14px 0 28px;flex:1}
+
+.report-heading{margin:0 0 22px 8px}
+.report-heading>span{display:block;margin-bottom:5px;color:var(--report-red);font-family:var(--FontePoppinsBold);font-size:11px;line-height:1;text-transform:uppercase}
+.report-heading h1{margin:0;color:var(--report-deep);font-family:var(--FontePoppinsBold);font-size:44px;line-height:1.12;letter-spacing:-1.1px}
+.report-heading p{margin:7px 0 0;color:var(--report-muted);font-size:16px;line-height:1.5}
+
+.report-alert{margin:0 0 14px;padding:11px 16px;border-radius:10px;font-family:var(--FontePoppinsSemiBold);font-size:12px}
+.report-alert-error{background:#f2d9d6;color:var(--report-red)}
+.report-alert-success{background:#dceae2;color:var(--report-green)}
+
+.report-card{height:720px;padding:52px 40px;border-radius:27px;background:var(--report-paper);box-shadow:3px 4px 0 rgba(23,57,47,.045),6px 7px 0 rgba(23,57,47,.035);display:grid;grid-template-columns:326px 901px;column-gap:87px;align-items:start}
+.report-product{min-width:0}
+.report-product-image{width:326px;height:286px;border-radius:14px;background:#faf9f5;display:grid;place-items:center;overflow:hidden}
+.report-product-image img{display:block;width:100%;height:100%;object-fit:contain}
+.report-image-placeholder{color:#aab4ae;font-size:62px}
+.report-product h2{margin:27px 10px 0;color:var(--report-deep);font-family:var(--FontePoppinsBold);font-size:20px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.report-product p{margin:11px 10px 0;color:#737373;font-size:14px;line-height:1.5}
+.report-product p strong{font-family:var(--FontePoppinsRegular);font-weight:400}
+.report-product-code{width:max-content;min-height:38px;margin:29px 10px 0;padding:0 16px;border-radius:999px;background:var(--report-green);color:#fff;display:flex;align-items:center;font-family:var(--FontePoppinsSemiBold);font-size:13px;line-height:1;white-space:nowrap}
+.report-product-code b{font:inherit}
+
+.report-form-column{width:901px;min-width:0;margin-top:-8px}
+.report-form-column>h2{margin:0;color:var(--report-deep);font-family:var(--FontePoppinsBold);font-size:29px;line-height:1.3;letter-spacing:-.35px}
+.report-form-intro{margin:10px 0 0;color:var(--report-muted);font-size:16px;line-height:1.5}
+.report-form-column form{margin-top:34px}
+.report-reasons{margin:0;padding:0;border:0;display:flex;flex-direction:column;gap:28px}
+.report-reasons label{width:max-content;min-height:20px;display:flex;align-items:center;gap:10px;color:#222;font-size:15px;line-height:20px;cursor:pointer}
+.report-reasons input{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;border:1.5px solid var(--report-line);border-radius:6px;background:var(--report-paper);display:grid;place-items:center;flex:0 0 auto;cursor:pointer}
+.report-reasons input:checked{border-color:var(--report-green);background:var(--report-green)}
+.report-reasons input:checked::after{content:"";width:8px;height:13px;margin-top:-3px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.report-reasons input:focus-visible{outline:3px solid rgba(32,89,68,.2);outline-offset:2px}
+
+.report-details{margin-top:38px}
+.report-details label{display:block;margin:0 0 5px;color:var(--report-deep);font-family:var(--FontePoppinsSemiBold);font-size:15px;line-height:1.4}
+.report-details textarea{display:block;width:901px;height:126px;padding:17px;border:1.25px solid var(--report-line);border-radius:16px;outline:0;resize:none;background:var(--report-paper);color:#222;font-size:16px;line-height:1.55}
+.report-details textarea::placeholder{color:#717171;opacity:1}
+.report-details textarea:focus{border-color:var(--report-green);box-shadow:0 0 0 3px rgba(32,89,68,.1)}
+
+.report-actions{height:54px;margin-top:62px;display:grid;grid-template-columns:225px 656px;gap:20px}
+.report-button{height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:var(--FontePoppinsSemiBold);font-size:15px;text-decoration:none;cursor:pointer}
+.report-cancel{border:1.4px solid var(--report-green);background:transparent;color:var(--report-green)}
+.report-submit{border:0;background:var(--report-red);color:#fff;box-shadow:3px 4px 0 rgba(23,57,47,.11)}
+.report-cancel:hover{background:#dceae2}
+.report-submit:hover{filter:brightness(.95)}
+.report-button:focus-visible{outline:3px solid rgba(32,89,68,.25);outline-offset:3px}
+
+@media(max-width:1565px){
+  .report-page{width:min(1180px,calc(100% - 40px))}
+  .report-card{height:auto;min-height:680px;grid-template-columns:300px minmax(0,1fr);column-gap:55px}
+  .report-product-image{width:300px;height:270px}
+  .report-form-column,.report-details textarea{width:100%}
+  .report-actions{grid-template-columns:minmax(180px,225px) minmax(280px,1fr)}
+}
+
+@media(max-width:900px){
+  .report-page{width:calc(100% - 32px);min-height:0;padding-top:28px}
+  .report-heading{margin-left:0}
+  .report-heading h1{font-size:clamp(34px,8vw,44px)}
+  .report-card{padding:30px;grid-template-columns:1fr;gap:42px}
+  .report-product{display:grid;grid-template-columns:220px minmax(0,1fr);grid-template-rows:auto auto auto;column-gap:24px;align-items:start}
+  .report-product-image{width:220px;height:200px;grid-row:1/4}
+  .report-product h2,.report-product p,.report-product-code{margin-left:0;margin-right:0}
+  .report-product-code{margin-top:22px}
+  .report-form-column{margin-top:0}
+}
+
+@media(max-width:600px){
+  .report-page{padding-bottom:45px}
+  .report-card{padding:22px;border-radius:22px}
+  .report-product{display:block;text-align:center}
+  .report-product-image{width:100%;height:min(76vw,286px)}
+  .report-product-code{margin-inline:auto}
+  .report-form-column>h2{font-size:25px}
+  .report-reasons label{width:100%;font-size:14px}
+  .report-actions{height:auto;margin-top:34px;grid-template-columns:1fr;gap:12px}
+  .report-footer{padding:0 18px;font-size:9px}
+}

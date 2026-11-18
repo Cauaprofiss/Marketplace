@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Valor do anúncio - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/anuncio-wizard.css(v='20260923-figma-wizard')}" href="/Assets/css/anuncio-wizard.css?v=20260923-figma-wizard">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="wizard-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="wizard-main">
+    <div class="wizard-stepper" style="--progress:66.4%">
+      <div class="wizard-stepper-progress"></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">1</div><span>Início</span></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">2</div><span>Fotos</span></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">3</div><span>Categoria</span></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">4</div><span>Informações</span></div>
+      <div class="wizard-step is-active"><div class="wizard-step-circle">5</div><span>Valor</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">6</div><span>Publicar</span></div>
+    </div>
+
+    <div class="wizard-heading">
+      <h1>Selecionar valor e doação</h1>
+      <p>Defina o preço e a finalidade da venda.</p>
+    </div>
+
+    <form class="wizard-flow-form" id="valueForm" method="post" th:action="@{/anuncios/novo/valor}">
+      <input type="hidden" name="idProduto" th:value="${idProduto}">
+      <input type="hidden" id="preco" name="preco" th:value="${anuncio.preco != null and anuncio.preco > 0 ? anuncio.preco : ''}">
+      <input type="hidden" name="quantidade" th:value="${anuncio.quantidade != null and anuncio.quantidade > 0 ? anuncio.quantidade : ''}">
+      <input type="hidden" name="localRetirada" th:value="${anuncio.localRetirada != null ? anuncio.localRetirada.name() : 'patio_interno'}">
+      <input type="hidden" id="finalidade" name="finalidade" th:value="${anuncio.finalidade != null ? anuncio.finalidade : 'formatura'}">
+
+      <section class="wizard-card wizard-value-card">
+        <div th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+        <div class="value-layout">
+          <div class="value-main-column">
+            <h2>Quanto custa e para onde vai a arrecadação?</h2>
+            <p class="wizard-intro">Defina um preço justo e informe o destino da arrecadação.</p>
+
+            <div class="wizard-field value-price-field">
+              <label for="precoVisual">Preço</label>
+              <div class="price-field">
+                <span>R$</span>
+                <input id="precoVisual" type="text" inputmode="decimal" autocomplete="off" required
+                       th:value="${anuncio.preco != null and anuncio.preco > 0 ? #numbers.formatDecimal(anuncio.preco,1,2) : ''}"
+                       placeholder="Ex.: 12,00">
+              </div>
+            </div>
+
+            <div class="wizard-field value-availability-field"><label for="disponibilidadeRetirada">Disponibilidade</label><select class="wizard-select" id="disponibilidadeRetirada" name="disponibilidadeRetirada" required><option value="intervalo_manha" th:selected="${anuncio.disponibilidadeRetirada == null or anuncio.disponibilidadeRetirada.name() == 'intervalo_manha'}">Intervalo Manhã 9:40 - 10:00</option><option value="intervalo_tarde" th:selected="${anuncio.disponibilidadeRetirada != null and anuncio.disponibilidadeRetirada.name() == 'intervalo_tarde'}">Intervalo Tarde 15:50 - 16:10</option></select></div>
+
+            <div class="wizard-field value-purpose-field">
+              <span class="wizard-label">Finalidade</span>
+              <div class="purpose-options" data-purpose-group><button class="purpose-option" type="button" data-purpose-value="formatura" th:classappend="${anuncio.finalidade == null or anuncio.finalidade == 'formatura'} ? ' is-selected' : ''" th:attr="aria-pressed=${anuncio.finalidade == null or anuncio.finalidade == 'formatura'}">
+                <span class="wizard-radio"></span>
+                <span><strong>Formatura da turma</strong><small>Arrecadação coletiva</small></span>
+              </button><button class="purpose-option" type="button" data-purpose-value="renda_extra" th:classappend="${anuncio.finalidade == 'renda_extra'} ? ' is-selected' : ''" th:attr="aria-pressed=${anuncio.finalidade == 'renda_extra'}"><span class="wizard-radio"></span><span><strong>Renda Extra</strong><small>Arrecadação individual</small></span></button></div>
+            </div>
+          </div>
+
+          <aside class="value-summary">
+            <small>VALOR ESTIMADO</small>
+            <div class="summary-price" id="summaryPrice"
+                 th:text="${anuncio.preco != null and anuncio.preco > 0 ? 'R$ ' + #numbers.formatDecimal(anuncio.preco,1,2) : 'R$ —'}">R$ —</div>
+            <div class="summary-divider"></div>
+            <div class="summary-line">
+              <span>Estoque</span>
+              <strong th:text="${anuncio.quantidade != null and anuncio.quantidade > 0 ? anuncio.quantidade + ' unidades' : '—'}">—</strong>
+            </div>
+            <div class="summary-line">
+              <span>Disponibilidade</span>
+              <strong id="summaryAvailability" th:text="${anuncio.disponibilidadeRetirada == null ? 'Intervalo Manhã' : anuncio.disponibilidadeRetirada.label}">Intervalo Manhã</strong>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <div class="wizard-actions">
+        <a class="wizard-button wizard-button-secondary" th:href="@{/anuncios/novo/informacoes(idProduto=${idProduto})}">Voltar</a>
+        <button class="wizard-button wizard-button-primary" type="submit">Continuar</button>
+      </div>
+    </form>
+  </main>
+  <footer class="wizard-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script>
+    (() => {
+      const form = document.getElementById('valueForm');
+      const visiblePrice = document.getElementById('precoVisual');
+      const hiddenPrice = document.getElementById('preco');
+      const summary = document.getElementById('summaryPrice');
+      const availability = document.getElementById('disponibilidadeRetirada');
+      const availabilitySummary = document.getElementById('summaryAvailability');
+
+      const parsePrice = value => {
+        const clean = value.replace(/[^0-9,.]/g, '').trim();
+        if (!clean) return null;
+        const normalized = clean.includes(',')
+          ? clean.replace(/\./g, '').replace(',', '.')
+          : clean;
+        return Number.parseFloat(normalized) || 0;
+      };
+
+      const updateSummary = () => {
+        const value = parsePrice(visiblePrice.value);
+        if (value === null) {
+          summary.textContent = 'R$ —';
+          hiddenPrice.value = '';
+          return;
+        }
+        summary.textContent = 'R$ ' + value.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        hiddenPrice.value = value.toFixed(2);
+      };
+
+      visiblePrice.addEventListener('input', updateSummary);
+      availability.addEventListener('change', () => { availabilitySummary.textContent = availability.options[availability.selectedIndex].text; });
+      document.querySelectorAll('[data-purpose-group] .purpose-option').forEach(option => option.addEventListener('click', () => { document.querySelectorAll('[data-purpose-group] .purpose-option').forEach(item => { item.classList.remove('is-selected'); item.setAttribute('aria-pressed','false'); }); option.classList.add('is-selected'); option.setAttribute('aria-pressed','true'); document.getElementById('finalidade').value = option.dataset.purposeValue; }));
+      form.addEventListener('submit', updateSummary);
+      updateSummary();
+    })();
+  </script>
+</body>
+</html>
+

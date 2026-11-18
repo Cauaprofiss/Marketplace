@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus anúncios - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/meus-anuncios.css(v='20261013-full-image')}" href="/Assets/css/meus-anuncios.css?v=20261013-full-image">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body>
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="my-ads-page">
+    <div class="campus-notice" data-campus-notice hidden role="status" th:if="${sucesso != null}" th:text="${sucesso}"></div>
+    <div class="campus-notice campus-notice--error" data-campus-notice hidden role="alert" th:if="${erro != null}" th:text="${erro}"></div>
+    <section class="my-ads-heading" aria-labelledby="my-ads-title">
+      <div>
+        <span class="my-ads-eyebrow">Campus Marketplace</span>
+        <h1 id="my-ads-title">Meus anúncios</h1>
+        <p>Acompanhe estoque, pedidos e desempenho da sua vitrine.</p>
+      </div>
+      <a class="new-ad-button" th:href="@{/anuncios/novo}" href="/anuncios/novo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        Novo anúncio
+      </a>
+    </section>
+
+    <section class="ads-panel" aria-labelledby="showcase-title">
+      <header class="ads-panel-heading">
+        <h2 id="showcase-title">Sua vitrine no campus</h2>
+        <p>Acompanhe seus anúncios, disponibilidade e pedidos.</p>
+      </header>
+
+      <div class="ads-table" role="table" aria-label="Seus anúncios">
+        <div class="ads-table-header" role="row">
+          <span role="columnheader">Produto</span>
+          <span role="columnheader">Preço</span>
+          <span role="columnheader">Status</span>
+          <span role="columnheader">Ações</span>
+        </div>
+
+        <div class="ads-table-body" id="adsContainer">
+          <article class="ad-row" role="row" th:each="anuncio : ${anuncios}"
+                   th:attr="data-search=${anuncio.nome + ' ' + anuncio.descricao}">
+            <div class="product-info" role="cell">
+              <a class="product-image" th:href="@{/produtos/{id}(id=${anuncio.idProduto})}" href="#"
+                 th:aria-label="${'Ver anúncio ' + anuncio.nome}">
+                <img th:if="${anuncio.fotoUrl != null and !#strings.isEmpty(anuncio.fotoUrl)}"
+                     th:src="${anuncio.fotoUrl}" th:alt="${anuncio.nome}">
+                <span class="product-image-placeholder"
+                      th:unless="${anuncio.fotoUrl != null and !#strings.isEmpty(anuncio.fotoUrl)}">Sem imagem</span>
+              </a>
+              <div class="product-copy">
+                <a class="product-name" th:href="@{/produtos/{id}(id=${anuncio.idProduto})}" href="#"
+                   th:text="${anuncio.nome}">Bolo de chocolate com brigadeiro</a>
+                <p class="product-description" th:text="${anuncio.descricao}">Massa caseira, brigadeiro e retirada no bloco A.</p>
+                <span class="product-stock">
+                  <strong th:text="${anuncio.quantidade}">12</strong>
+                  <span th:text="${anuncio.quantidade == 1 ? ' disponível' : ' disponíveis'}"> disponíveis</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="product-price" role="cell">
+              <small>R$</small>
+              <strong th:text="${#numbers.formatDecimal(anuncio.preco, 1, 2)}">12,00</strong>
+            </div>
+
+            <div class="product-status" role="cell">
+              <span class="status status-available" th:if="${anuncio.status.name() == 'disponivel'}">Ativo</span>
+              <span class="status status-unavailable" th:if="${anuncio.status.name() == 'indisponivel'}">Pausado</span>
+              <span class="status status-review" th:if="${anuncio.status.name() == 'em_revisao'}">Em revisão</span>
+              <span class="status status-draft" th:if="${anuncio.status.name() == 'rascunho'}">Rascunho</span>
+              <span class="status status-rejected" th:if="${anuncio.status.name() == 'reprovado'}">Reprovado</span>
+            </div>
+
+            <div class="row-actions" role="cell">
+              <a class="edit-button" th:href="@{/anuncios/editar/{id}(id=${anuncio.idProduto})}" href="#">Editar</a>
+              <div class="options-wrapper">
+                <button class="options-button" type="button" aria-expanded="false" aria-haspopup="menu" data-options-toggle>
+                  Mais opções
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+                </button>
+                <div class="options-menu" role="menu">
+                  <a role="menuitem" th:href="@{/produtos/{id}(id=${anuncio.idProduto})}" href="#">Ver anúncio</a>
+                  <button role="menuitem" type="button"
+                          th:attr="data-id=${anuncio.idProduto},data-nome=${anuncio.nome},data-valor=${#numbers.formatDecimal(anuncio.preco, 1, 2)},data-status=${anuncio.status.name()}"
+                          data-status-open>Alterar status</button>
+                  <button role="menuitem" type="button" class="danger-option"
+                          th:attr="data-id=${anuncio.idProduto}" data-delete-open>Excluir anúncio</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <section class="empty-state" th:if="${anuncios == null or #lists.isEmpty(anuncios)}"
+                   th:classappend="${anuncios == null or #lists.isEmpty(anuncios)} ? ' visible'" data-empty-state>
+            <span class="empty-icon" aria-hidden="true">+</span>
+            <h3>Você ainda não possui anúncios</h3>
+            <p>Crie seu primeiro anúncio e comece a vender no campus.</p>
+            <a class="new-ad-button" th:href="@{/anuncios/novo}" href="/anuncios/novo">Criar anúncio</a>
+          </section>
+
+          <section class="empty-state" id="searchEmpty">
+            <span class="empty-icon" aria-hidden="true">⌕</span>
+            <h3>Nenhum anúncio encontrado</h3>
+            <p>Tente pesquisar usando outro nome ou descrição.</p>
+          </section>
+        </div>
+
+        <footer class="ads-table-footer">
+          <span><strong th:text="${anuncios != null ? #lists.size(anuncios) : 0}">2</strong>
+            <span th:text="${anuncios != null and #lists.size(anuncios) == 1 ? ' anúncio' : ' anúncios'}"> anúncios</span>
+            <span class="footer-note"> • acompanhe sua vitrine</span></span>
+          <span>Página 1 de 1</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <footer class="my-ads-footer" aria-hidden="true"></footer>
+
+  <div class="my-ads-modal-overlay" id="statusModal" aria-hidden="true">
+    <section class="status-modal" role="dialog" aria-modal="true" aria-labelledby="status-modal-title">
+      <button class="modal-close" type="button" aria-label="Fechar" data-status-close>×</button>
+      <h2 id="status-modal-title">Alterar status do anúncio</h2>
+      <p>Escolha o que deseja fazer com este produto.</p>
+      <div class="status-product"><strong id="statusProductName">Bolo de chocolate</strong><span id="statusProductInfo">R$ 12,00 • ativo</span></div>
+      <form id="statusForm" method="post">
+        <input type="hidden" id="statusValue" name="status" value="indisponivel">
+        <div class="status-options">
+          <button class="status-option selected" type="button" data-status="indisponivel"><span class="status-radio"></span><span><strong>Pausar temporariamente</strong><small>Oculta sem excluir</small></span></button>
+          <button class="status-option" type="button" data-status="disponivel"><span class="status-radio"></span><span><strong>Reativar anúncio</strong><small>Volta a aparecer na vitrine</small></span></button>
+        </div>
+        <div class="modal-actions"><button class="modal-button modal-cancel" type="button" data-status-close>Cancelar</button><button class="modal-button modal-confirm" type="submit">Confirmar</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="my-ads-modal-overlay" id="deleteModal" aria-hidden="true">
+    <section class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+      <h2 id="delete-modal-title">Excluir anúncio?</h2>
+      <p>Essa ação removerá o anúncio da sua vitrine. Verifique se realmente deseja continuar.</p>
+      <form id="deleteForm" method="post"><div class="modal-actions"><button class="modal-button modal-cancel" type="button" data-delete-close>Cancelar</button><button class="modal-button delete-confirm" type="submit">Excluir anúncio</button></div></form>
+    </section>
+  </div>
+
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/meus-anuncios.js}" src="/Assets/JavaScript/meus-anuncios.js"></script>
+</body>
+</html>
+

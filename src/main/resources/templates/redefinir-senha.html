@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redefinir senha — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/recuperacao-senha.css(v='20260923-1')}" href="/Assets/css/recuperacao-senha.css?v=20260923-1">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+</head>
+<body class="recovery-page">
+  <div class="campus-notice campus-notice--toast" data-campus-notice hidden role="status" th:if="${sucesso != null}" th:text="${sucesso}"></div>
+  <main class="recovery-layout">
+    <section class="recovery-form-panel" aria-labelledby="recovery-title">
+      <div class="recovery-content" th:classappend="${etapaNovaSenha == true} ? ' password-stage'">
+        <a class="recovery-brand" th:href="@{/login}" href="/login" aria-label="Campus MarketPlace — voltar ao login">
+          <span>Campus</span><strong>MarketPlace</strong>
+        </a>
+        <header class="recovery-heading">
+          <h1 id="recovery-title" th:text="${etapaNovaSenha == true} ? 'Criar nova senha' : 'Código de Verificação enviado'">Código de Verificação enviado</h1>
+          <p>O link é seguro e expira em 30 minutos.</p>
+        </header>
+        <form class="recovery-form" th:if="${etapaNovaSenha != true}" th:action="@{/redefinir-senha/verificar}" method="post">
+          <input type="hidden" name="email" th:value="${email}">
+          <label class="recovery-field">
+            <span>Inserir Código de verificação :</span>
+            <span class="recovery-input-wrap">
+              <input type="text" name="codigo" th:value="${codigo}" autocomplete="one-time-code" maxlength="12" required autofocus>
+            </span>
+          </label>
+          <div class="campus-notice campus-notice--error" data-campus-notice hidden role="alert" th:if="${erro != null}" th:text="${erro}"></div>
+          <p class="recovery-guidance"><span th:if="${erro == null}">Enviaremos as instruções apenas<br>para o Email.</span></p>
+          <button class="recovery-submit" type="submit">enviar</button>
+          <a class="recovery-back" th:href="@{/login}" href="/login">Voltar ao login</a>
+        </form>
+        <form class="recovery-form recovery-password-form" th:if="${etapaNovaSenha == true}" th:action="@{/redefinir-senha}" method="post">
+          <input type="hidden" name="email" th:value="${email}">
+          <input type="hidden" name="codigo" th:value="${codigo}">
+          <label class="recovery-field"><span>Nova senha:</span><span class="recovery-input-wrap"><input type="password" name="novaSenha" minlength="8" autocomplete="new-password" required autofocus></span></label>
+          <label class="recovery-field"><span>Confirmar nova senha:</span><span class="recovery-input-wrap"><input type="password" name="confirmacaoSenha" minlength="8" autocomplete="new-password" required></span></label>
+          <div class="campus-notice campus-notice--error" data-campus-notice hidden role="alert" th:if="${erro != null}" th:text="${erro}"></div>
+          <p class="recovery-guidance"><span th:if="${erro == null}">Use pelo menos 8 caracteres.</span></p>
+          <button class="recovery-submit" type="submit">Redefinir senha</button>
+          <a class="recovery-back" th:href="@{/recuperar-senha}" href="/recuperar-senha">Usar outro email</a>
+        </form>
+      </div>
+    </section>
+    <aside class="recovery-message-panel" aria-label="Orientação para verificação">
+      <div th:if="${etapaNovaSenha != true}">
+        <h2>Vamos<br>Vericar isso.</h2>
+        <p>Enviamos um código de verificação para o seu<br>email, cole ele aqui e desbloqueie sua a vitrine<br>completa do campus</p>
+      </div>
+      <div th:if="${etapaNovaSenha == true}">
+        <h2>Último passo.</h2>
+        <p>Escolha uma nova senha para voltar à sua conta.</p>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>

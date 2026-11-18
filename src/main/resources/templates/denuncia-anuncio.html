@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Denunciar anúncio — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/denuncia-anuncio.css}" href="/Assets/css/denuncia-anuncio.css">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="report-body">
+<div class="report-shell">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="report-page">
+    <header class="report-heading">
+      <span>Campus Marketplace</span>
+      <h1>Denunciar anúncio</h1>
+      <p>Ajude a manter a comunidade segura.</p>
+    </header>
+
+    <div th:if="${erro != null}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert">Ocorreu um erro ao enviar a denúncia.</div>
+    <div th:if="${sucesso != null}" th:text="${sucesso}" class="campus-notice" data-campus-notice hidden role="status">Denúncia enviada com sucesso.</div>
+
+    <section class="report-card">
+      <aside class="report-product">
+        <div class="report-product-image">
+          <img th:if="${produto != null and produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+               th:src="@{${produto.fotoUrl}}" th:alt="${produto.nome}">
+          <span class="report-image-placeholder"
+                th:unless="${produto != null and produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+                aria-hidden="true">□</span>
+        </div>
+
+        <h2 th:text="${produto != null ? produto.nome : 'Bolo de chocolate'}">Bolo de chocolate</h2>
+        <p>Vendido por <strong th:text="${produto != null and produto.usuario != null ? produto.usuario.nome + (produto.usuario.sobrenome != null and !#strings.isEmpty(produto.usuario.sobrenome) ? ' ' + produto.usuario.sobrenome : '') : 'Ana Souza'}">Ana Souza</strong></p>
+        <span class="report-product-code">Anúncio #A-<b th:text="${produto != null ? produto.idProduto : '241'}">241</b></span>
+      </aside>
+
+      <div class="report-form-column">
+        <h2>Qual é o motivo?</h2>
+        <p class="report-form-intro">Selecione a opção que melhor descreve o problema.</p>
+
+        <form th:action="@{/denuncias}" method="post" id="denunciaForm">
+          <input type="hidden" name="idProduto" th:value="${produto != null ? produto.idProduto : idProduto}">
+
+          <fieldset class="report-reasons">
+            <legend class="sr-only">Motivo da denúncia</legend>
+            <label><input type="radio" name="motivo" value="PRODUTO_PROIBIDO" th:checked="${motivo == 'PRODUTO_PROIBIDO'}" required><span>Produto proibido ou perigoso</span></label>
+            <label><input type="radio" name="motivo" value="INFORMACOES_ENGANOSAS" th:checked="${motivo == 'INFORMACOES_ENGANOSAS'}"><span>Informações enganosas</span></label>
+            <label><input type="radio" name="motivo" value="PRECO_ABUSIVO" th:checked="${motivo == 'PRECO_ABUSIVO'}"><span>Preço abusivo</span></label>
+            <label><input type="radio" name="motivo" value="IMAGEM_INADEQUADA" th:checked="${motivo == 'IMAGEM_INADEQUADA'}"><span>Imagem inadequada</span></label>
+            <label><input type="radio" name="motivo" value="OUTRO" th:checked="${motivo == 'OUTRO'}"><span>Outro motivo</span></label>
+          </fieldset>
+
+          <div class="report-details">
+            <label for="detalhes">Conte mais detalhes</label>
+            <textarea id="detalhes" name="detalhes" maxlength="1000" placeholder="Descreva o motivo da denúncia..." th:text="${detalhes}"></textarea>
+          </div>
+
+          <div class="report-actions">
+            <a class="report-button report-cancel" th:href="@{/produtos/{id}(id=${produto.idProduto})}">Cancelar</a>
+            <button class="report-button report-submit" type="submit">Enviar denúncia</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+</div>
+
+<script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body>
+</html>
+

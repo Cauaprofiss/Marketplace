@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Histórico de compras - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/pedidos.css(v='20261103-sales-polish-1')}" href="/Assets/css/pedidos.css?v=20261103-sales-polish-1">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="orders-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="orders-main history-main">
+    <header class="orders-heading"><small>Campus Marketplace</small><h1>Histórico de compras</h1><p>Acompanhe seus pedidos anteriores.</p></header>
+    <div th:if="${sucesso != null}" th:text="${sucesso}" class="campus-notice" data-campus-notice hidden role="status"></div><div th:if="${erro != null}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+    <section class="history-panel">
+      <nav class="history-tabs" aria-label="Filtrar pedidos"><button class="active" type="button" data-order-filter="todos">Todos</button><button type="button" data-order-filter="pendente">Em andamento</button><button type="button" data-order-filter="concluida">Concluídos</button></nav>
+      <div class="history-list" th:if="${pedidos != null and !#lists.isEmpty(pedidos)}">
+        <article class="history-card" th:each="pedido : ${pedidos}" th:attr="data-order-status=${pedido.statusChave}">
+          <a class="history-image" th:href="@{/compras/{id}(id=${pedido.idCompraVendedor})}"><img th:if="${pedido.produtoPrincipal != null and pedido.produtoPrincipal.fotoUrl != null}" th:src="@{${pedido.produtoPrincipal.fotoUrl}}" alt=""><span th:unless="${pedido.produtoPrincipal != null and pedido.produtoPrincipal.fotoUrl != null}">Produto</span></a>
+          <div class="history-copy"><small th:text="${'Pedido #CM-' + #numbers.formatInteger(pedido.idCompraVendedor,4)}">Pedido #CM-2048</small><h2 th:text="${pedido.produtoResumo}">Bolo de chocolate</h2><p th:text="${pedido.produtoPrincipal != null and pedido.produtoPrincipal.usuario != null ? 'Vendido por ' + pedido.produtoPrincipal.usuario.nome : 'Vendedor'}">Vendido por Ana Souza</p></div>
+          <span class="history-status" th:classappend="${pedido.statusChave}" th:text="${pedido.statusLabel}">Retirada combinada</span>
+          <strong class="history-price" th:text="${'R$ ' + #numbers.formatDecimal(pedido.total,1,2,'COMMA')}">R$ 12,00</strong>
+          <div class="history-actions" th:if="${pedido.statusChave == 'concluida'}"><a class="secondary" th:href="@{/compras/{id}/avaliar-vendedor(id=${pedido.idCompraVendedor})}">Avaliar Vendedor</a><a class="secondary" th:href="@{/compras/{id}/avaliar(id=${pedido.idCompraVendedor})}">Avaliar</a></div>
+          <div class="history-actions single" th:unless="${pedido.statusChave == 'concluida'}"><a class="secondary" th:href="@{/compras/{id}(id=${pedido.idCompraVendedor})}">Acompanhar</a></div>
+        </article>
+      </div>
+      <div class="history-empty" th:if="${pedidos == null or #lists.isEmpty(pedidos)}"><h2>Você ainda não possui pedidos</h2><p>Quando comprar algo, o acompanhamento aparecerá aqui.</p><a th:href="@{/produtos}">Explorar vitrine</a></div>
+    </section>
+  </main>
+  <footer class="orders-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script>(()=>{const buttons=[...document.querySelectorAll('[data-order-filter]')],cards=[...document.querySelectorAll('[data-order-status]')];buttons.forEach(button=>button.addEventListener('click',()=>{buttons.forEach(item=>item.classList.remove('active'));button.classList.add('active');cards.forEach(card=>card.hidden=button.dataset.orderFilter!=='todos'&&card.dataset.orderStatus!==button.dataset.orderFilter)}))})();</script>
+</body></html>

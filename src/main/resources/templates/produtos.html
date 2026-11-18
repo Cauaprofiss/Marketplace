@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Produtos disponíveis no Campus MarketPlace">
+  <title>Produtos — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/produtos.css(v='20261026-demo-images-1')}" href="/Assets/css/produtos.css?v=20261026-demo-images-1">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="products-page">
+<div class="app-shell">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="page section-pad page-enter">
+    <div class="page-heading">
+      <div><span class="eyebrow red">Compre no campus</span><h1>Produtos</h1><p>Descubra o que os estudantes estão vendendo hoje.</p></div>
+      <button class="button outline mobile-filter" type="button" aria-expanded="false" data-filter-toggle><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtros</button>
+    </div>
+
+    <div th:if="${erroCarrinho != null}" th:text="${erroCarrinho}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert">Não foi possível adicionar o produto ao carrinho.</div>
+
+    <div class="category-tabs" aria-label="Categorias">
+      <button type="button" class="active" data-category="todos">Todos</button>
+      <button type="button" th:each="categoria : ${categoriasProdutos}" th:text="${categoria.nome}" th:attr="data-category=${categoria.nome}">Categoria</button>
+    </div>
+
+    <div class="market-layout">
+      <section class="market-products" aria-live="polite">
+        <div class="market-results-head">
+          <strong><span data-result-count th:text="${#lists.size(produtos)}">0</span> <span data-result-label>resultados</span></strong>
+          <span data-sort-label>Mais relevantes</span>
+        </div>
+        <div class="products-grid" id="productsGrid">
+          <article class="product-card reveal" th:each="produto, iter : ${produtos}"
+                   th:with="media=${mediasAvaliacoesProduto[produto.idProduto]}"
+                   th:style="'--reveal-delay:' + ${iter.index * 45} + 'ms'"
+                   th:attr="data-name=${produto.nome},data-description=${produto.descricao},data-category=${produto.categoria != null ? produto.categoria.nome : ''},data-price=${produto.preco},data-status=${produto.status.name()},data-stock=${produto.quantidade != null ? produto.quantidade : 0},data-date=${produto.dataPublicacao}">
+            <div class="product-image">
+              <span class="product-image-stage" th:if="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"><img th:src="@{${produto.fotoUrl}}" th:alt="${produto.nome}" loading="lazy" decoding="async"></span>
+              <svg class="product-image-placeholder" th:unless="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>
+              <button class="favorite-button" type="button" th:classappend="${favoritosIds != null and favoritosIds.contains(produto.idProduto)} ? ' active' : ''" th:attr="data-product-id=${produto.idProduto},aria-label=${favoritosIds != null and favoritosIds.contains(produto.idProduto) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'},title=${favoritosIds != null and favoritosIds.contains(produto.idProduto) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button>
+            </div>
+            <div class="product-copy">
+              <span class="eyebrow" th:text="${produto.categoria != null ? produto.categoria.nome : 'Campus'}">Categoria</span>
+              <h3 th:text="${produto.nome}">Produto</h3>
+              <p><span><i class="online-dot"></i> Aluno IFSP • disponível</span></p>
+            </div>
+            <div class="product-footer"><strong th:text="${'R$ ' + #numbers.formatDecimal(produto.preco, 1, 2, 'COMMA')}">R$ 0,00</strong><span class="card-rating-summary" th:attr="aria-label=${media != null and media > 0 ? 'Avaliação média ' + #numbers.formatDecimal(media, 1, 1, 'COMMA') + ' de 5' : 'Produto ainda sem avaliações'}"><b aria-hidden="true">★</b><em th:text="${media != null and media > 0 ? #numbers.formatDecimal(media, 1, 1, 'COMMA') : '—'}">—</em></span></div>
+            <a class="product-link" th:href="@{/produtos/{id}(id=${produto.idProduto})}" href="#" th:aria-label="${'Ver detalhes de ' + produto.nome}"></a>
+          </article>
+        </div>
+        <section class="empty-state" th:classappend="${#lists.isEmpty(produtos)} ? ' show' : ''" data-empty-state>
+          <div class="empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></div>
+          <h2 th:text="${#lists.isEmpty(produtos)} ? 'A vitrine ainda está vazia' : 'Nenhum resultado encontrado'">Nenhum resultado encontrado</h2>
+          <p th:text="${#lists.isEmpty(produtos)} ? 'Os anúncios aparecerão aqui depois que forem criados.' : 'Tente outra busca ou remova algum filtro.'">Tente outra busca ou remova algum filtro.</p>
+          <a class="button primary" th:href="@{/anuncios/novo}" href="/anuncios/novo">Criar anúncio</a>
+        </section>
+      </section>
+
+      <aside class="filters-card" data-filters>
+        <div class="panel-title"><div><span class="eyebrow">Refine a busca</span><h2>Filtros</h2></div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg></div>
+        <div class="filter-result-count"><strong data-filter-count th:text="${#lists.size(produtos)}">0</strong><span>itens encontrados</span></div>
+        <label class="field"><span>Buscar</span><input type="search" data-filter-search placeholder="Produto, categoria ou vendedor" autocomplete="off"></label>
+        <div class="filter-group"><strong>Faixa de preço</strong><div class="filter-price-row">
+          <label><span>Mínimo</span><input type="number" min="0" value="0" data-min-price placeholder="R$ 0"></label>
+          <label><span>Máximo</span><input type="number" min="0" th:value="${#numbers.formatDecimal(precoMaximo, 1, 0)}" data-max-price placeholder="Sem limite"></label>
+        </div></div>
+        <label class="filter-control"><span>Ordenar por</span><select data-sort>
+          <option value="relevance">Mais relevantes</option><option value="priceAsc">Menor preço</option><option value="priceDesc">Maior preço</option><option value="recent">Mais recentes</option>
+        </select></label>
+        <div class="filter-group availability-filter"><strong>Disponibilidade</strong><label class="check-row"><input type="checkbox" checked data-available-only><span>Somente itens disponíveis</span></label></div>
+        <div class="filter-actions"><button class="button primary full" type="button" data-apply-filters>Aplicar filtros</button><button class="button ghost full" type="button" data-clear-filters>Limpar tudo</button></div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <a class="footer-brand" th:href="@{/home}" href="/home"><span>Campus</span><strong>MarketPlace</strong></a>
+    <p>Uma vitrine colaborativa feita por estudantes, para estudantes.</p><small>IFSP — Campus São Miguel Paulista • 2026</small>
+  </footer>
+</div>
+<script th:src="@{/Assets/JavaScript/produtos.js}" src="/Assets/JavaScript/produtos.js" defer></script>
+<script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body>
+</html>
+

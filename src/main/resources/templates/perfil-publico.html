@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title th:text="${vendedor.nome + ' — Campus MarketPlace'}">Perfil do vendedor — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/perfil-publico.css(v='20261103-home-cards-3')}" href="/Assets/css/perfil-publico.css?v=20261103-home-cards-3">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="public-profile-page"><div class="public-profile-shell">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="public-profile-main">
+    <section class="seller-hero">
+      <div class="seller-avatar-wrap">
+        <img th:if="${vendedor.imagem != null and !#strings.isEmpty(vendedor.imagem)}" th:src="@{${vendedor.imagem}}" th:alt="${'Foto de ' + vendedor.nome}">
+        <span th:unless="${vendedor.imagem != null and !#strings.isEmpty(vendedor.imagem)}" th:text="${#strings.substring(vendedor.nome,0,1) + (vendedor.sobrenome != null and !#strings.isEmpty(vendedor.sobrenome) ? #strings.substring(vendedor.sobrenome,0,1) : '')}">AS</span>
+      </div>
+      <div class="seller-identity">
+        <h1 th:text="${vendedor.nome + (vendedor.sobrenome != null and !#strings.isEmpty(vendedor.sobrenome) ? ' ' + vendedor.sobrenome : '')}">Ana Souza</h1>
+        <p><span th:if="${vendedor.turma != null}" th:text="${vendedor.turma.nomeTurma}">3º Informática</span><b th:if="${vendedor.turma != null and vendedor.descricao != null and !#strings.isEmpty(vendedor.descricao)}">•</b><span th:if="${vendedor.descricao != null and !#strings.isEmpty(vendedor.descricao)}" th:text="${vendedor.descricao}">Vende doces para apoiar a formatura</span></p>
+        <form th:if="${usuarioLogado == null or usuarioLogado.idUsuario != vendedor.idUsuario}" th:action="@{/conversas/iniciar}" method="post"><input type="hidden" name="idUsuario" th:value="${vendedor.idUsuario}"><button type="submit">Conversar com <span th:text="${vendedor.nome}">a vendedora</span></button></form>
+      </div>
+      <dl class="seller-stats">
+        <div><dt th:text="${totalAvaliacoesVendedor > 0 ? #numbers.formatDecimal(mediaVendedor,1,1,'COMMA') : '—'}">—</dt><dd th:text="${totalAvaliacoesVendedor == 1 ? '1 avaliação' : totalAvaliacoesVendedor + ' avaliações'}">0 avaliações</dd></div>
+        <div><dt th:text="${#lists.size(produtos)}">4</dt><dd>Quantidade de anúncios</dd></div>
+      </dl>
+    </section>
+    <section class="seller-products">
+      <h2>Produtos de <span th:text="${vendedor.nome}">Ana</span></h2>
+      <div class="seller-empty" th:if="${#lists.isEmpty(produtos)}"><h3>Nenhum anúncio disponível</h3><p>Este vendedor ainda não possui produtos publicados na vitrine.</p></div>
+      <div class="seller-product-grid" th:unless="${#lists.isEmpty(produtos)}">
+        <article class="seller-product-card" th:each="produto : ${produtos}">
+          <a class="seller-product-content" th:href="@{/produtos/{id}(id=${produto.idProduto})}">
+            <span class="seller-product-image"><img th:if="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}" th:src="@{${produto.fotoUrl}}" th:alt="${produto.nome}" loading="lazy"><svg th:unless="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg></span>
+            <strong th:text="${produto.nome}">Bolo de chocolate</strong><small><i></i> Aluno IFSP • disponível</small><b class="seller-product-price" th:text="${'R$ ' + #numbers.formatDecimal(produto.preco,1,2,'COMMA')}">R$ 12,00</b>
+          </a>
+          <button class="seller-favorite" type="button" data-profile-favorite th:classappend="${favoritosIds != null and favoritosIds.contains(produto.idProduto)} ? ' saved' : ''" th:attr="data-product-id=${produto.idProduto},aria-pressed=${favoritosIds != null and favoritosIds.contains(produto.idProduto)},aria-label=${favoritosIds != null and favoritosIds.contains(produto.idProduto) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg></button>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer class="public-profile-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+</div><script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script><script th:src="@{/Assets/JavaScript/perfil-publico.js(v='20260923')}" src="/Assets/JavaScript/perfil-publico.js?v=20260923"></script>
+</body></html>

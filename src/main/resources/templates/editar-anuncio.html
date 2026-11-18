@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar anúncio - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/editar-anuncio.css(v='20261103-edit-fields-1')}" href="/Assets/css/editar-anuncio.css?v=20261103-edit-fields-1">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body>
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="edit-ad-page">
+    <section class="edit-ad-heading" aria-labelledby="edit-ad-title">
+      <span>Campus Marketplace</span>
+      <h1 id="edit-ad-title">Editar anúncio</h1>
+      <p>Mantenha fotos, preço e disponibilidade sempre atualizados.</p>
+    </section>
+
+    <section class="edit-ad-card">
+      <form class="edit-ad-form"
+            th:action="@{/anuncios/editar/{id}(id=${anuncio.idProduto})}"
+            action="#"
+            method="post"
+            enctype="multipart/form-data">
+        <div class="edit-ad-grid">
+          <section class="edit-image-column" aria-labelledby="photos-title">
+            <div class="edit-main-image">
+              <img id="mainImage"
+                   th:if="${anuncio.urlsFotos != null and !anuncio.urlsFotos.isEmpty()}"
+                   th:src="${anuncio.urlsFotos[0]}"
+                   th:alt="${anuncio.nome}">
+              <span id="imagePlaceholder" class="edit-image-placeholder"
+                    th:unless="${anuncio.urlsFotos != null and !anuncio.urlsFotos.isEmpty()}">Sem imagem</span>
+            </div>
+
+            <input class="hidden-file" type="file" id="imageInput" name="imagem"
+                   accept="image/jpeg,image/png,image/webp">
+            <button class="change-image-button" type="button" data-image-picker>Trocar imagem</button>
+
+            <h2 id="photos-title" class="additional-photos-title">Fotos adicionais</h2>
+            <div class="additional-photos">
+              <div class="secondary-photo-slot" th:each="i : ${#numbers.sequence(1,3)}"
+                   th:with="exists=${anuncio.urlsFotos != null and anuncio.urlsFotos.size() > i}">
+                <button class="additional-photo" type="button" data-secondary-picker
+                        th:classappend="${exists} ? 'existing-photo' : 'add-photo'"
+                        th:aria-label="${'Selecionar foto adicional ' + i}">
+                  <img th:if="${exists}" th:src="${anuncio.urlsFotos[i]}" alt="Foto adicional do anúncio">
+                  <svg th:unless="${exists}" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6v20M6 16h20"/></svg>
+                </button>
+                <input class="hidden-file" type="file" th:name="${'fotoSecundaria' + i}" accept="image/jpeg,image/png,image/webp">
+                <input type="hidden" th:name="${'urlSecundaria' + i}" th:value="${exists ? anuncio.urlsFotos[i] : ''}">
+                <small th:text="${exists ? 'Clique para trocar' : 'Clique para adicionar'}">Clique para trocar</small>
+              </div>
+            </div>
+          </section>
+
+          <section class="edit-fields" aria-label="Informações do anúncio">
+            <div class="edit-form-row primary-fields">
+              <div class="edit-field">
+                <label for="nome">Nome do produto</label>
+                <input type="text" id="nome" name="nome" th:value="${anuncio.nome}"
+                       placeholder="Nome do produto" maxlength="45" required>
+              </div>
+              <div class="edit-field">
+                <label for="categoria">Categoria</label>
+                <div class="select-wrap">
+                  <select id="categoria" name="categoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <option th:each="categoria : ${categorias}"
+                            th:value="${categoria.idCategoria}"
+                            th:text="${categoria.nome}"
+                            th:selected="${anuncio.idCategoria != null and categoria.idCategoria == anuncio.idCategoria}">Categoria</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="edit-form-row description-field">
+              <div class="edit-field">
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao" th:text="${anuncio.descricao}"
+                          placeholder="Descreva seu produto..." maxlength="250" required></textarea>
+              </div>
+            </div>
+
+            <div class="edit-form-row commerce-fields">
+              <div class="edit-field">
+                <label for="valor">Preço</label>
+                <input type="text" id="valor" name="valor" th:value="${anuncio.preco}"
+                       placeholder="R$ 0,00" inputmode="decimal" required>
+              </div>
+              <div class="edit-field">
+                <label for="quantidade">Quantidade</label>
+                <input type="number" id="quantidade" name="quantidade" min="0"
+                       th:value="${anuncio.quantidade}" placeholder="0" required>
+              </div>
+              <div class="edit-field">
+                <label for="retirada">Retirada</label>
+                <div class="select-wrap">
+                  <select id="retirada" name="localRetirada">
+                    <option value="">Selecione</option>
+                    <option value="patio_interno" th:selected="${anuncio.localRetirada != null and anuncio.localRetirada.name() == 'patio_interno'}">Pátio Interno</option>
+                    <option value="patio_externo" th:selected="${anuncio.localRetirada != null and anuncio.localRetirada.name() == 'patio_externo'}">Pátio Externo</option>
+                    <option value="quadra" th:selected="${anuncio.localRetirada != null and anuncio.localRetirada.name() == 'quadra'}">Quadra</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="edit-form-row preference-fields">
+              <fieldset class="availability-section">
+                <legend>Disponibilidade</legend>
+                <div class="select-wrap">
+                  <select class="availability-select" id="disponibilidadeRetirada" name="disponibilidadeRetirada" required>
+                    <option value="intervalo_manha" th:selected="${anuncio.disponibilidadeRetirada == null or anuncio.disponibilidadeRetirada.name() == 'intervalo_manha'}">Intervalo da manhã · 9:40–10:00</option>
+                    <option value="intervalo_tarde" th:selected="${anuncio.disponibilidadeRetirada != null and anuncio.disponibilidadeRetirada.name() == 'intervalo_tarde'}">Intervalo da tarde · 15:50–16:10</option>
+                  </select>
+                </div>
+              </fieldset>
+
+              <fieldset class="purpose-section">
+                <legend>Finalidade</legend>
+                <div class="edit-purpose-options">
+                  <button type="button" class="purpose-button" data-purpose-value="formatura" th:classappend="${anuncio.finalidade == null or anuncio.finalidade == 'formatura'} ? ' active' : ''" th:attr="aria-pressed=${anuncio.finalidade == null or anuncio.finalidade == 'formatura'}">Formatura da turma</button>
+                  <button type="button" class="purpose-button" data-purpose-value="renda_extra" th:classappend="${anuncio.finalidade == 'renda_extra'} ? ' active' : ''" th:attr="aria-pressed=${anuncio.finalidade == 'renda_extra'}">Renda Extra</button>
+                </div>
+                <input type="hidden" id="finalidade" name="finalidade" th:value="${anuncio.finalidade != null ? anuncio.finalidade : 'formatura'}">
+              </fieldset>
+            </div>
+          </section>
+        </div>
+
+        <div class="edit-actions">
+          <a class="edit-cancel" th:href="@{/anuncios}" href="/anuncios">Cancelar</a>
+          <button class="edit-save" type="submit">Salvar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="edit-ad-footer" aria-hidden="true"></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/editar-anuncio.js(v='20261103-edit-fields-1')}" src="/Assets/JavaScript/editar-anuncio.js?v=20261103-edit-fields-1"></script>
+</body>
+</html>
+

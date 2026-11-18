@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Minha conta - Campus Marketplace">
+  <title>Minha conta - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/perfil.css(v='20261026-account-details-scroll-2')}" href="/Assets/css/perfil.css?v=20261026-account-details-scroll-2">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="account-body">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="account-main">
+    <div class="account-container">
+      <header class="account-heading">
+        <span>Campus Marketplace</span>
+        <h1>Minha conta</h1>
+        <p aria-hidden="true">.</p>
+      </header>
+
+      <p th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert">Ocorreu um erro.</p>
+      <p th:if="${sucesso}" th:text="${sucesso}" class="campus-notice" data-campus-notice hidden role="status">Alterações salvas com sucesso.</p>
+
+      <div class="account-layout">
+        <aside class="account-sidebar" aria-label="Resumo da conta">
+          <div class="account-avatar"
+               th:text="${usuario.nome != null and !usuario.nome.isEmpty() ? #strings.substring(usuario.nome,0,1) + (usuario.sobrenome != null and !usuario.sobrenome.isEmpty() ? #strings.substring(usuario.sobrenome,0,1) : '') : '?'}">LR</div>
+
+          <h2 th:text="${usuario.nome + (usuario.sobrenome != null and !usuario.sobrenome.isEmpty() ? ' ' + usuario.sobrenome : '')}">Lucas Rodrigues</h2>
+          <p class="account-course"
+             th:with="codigoTurma=${usuario.turma != null and usuario.turma.nomeTurma != null ? usuario.turma.nomeTurma : ''}"
+             th:text="${codigoTurma.isEmpty() ? 'Curso não informado' : (codigoTurma.startsWith('INI') ? 'Informática para Internet ' + codigoTurma.substring(3,4) + 'º ano' : (codigoTurma.startsWith('PAV') ? 'Produção de Áudio e Vídeo ' + codigoTurma.substring(3,4) + 'º ano' : (codigoTurma.startsWith('DEG') ? 'Design Gráfico ' + codigoTurma.substring(3,4) + 'º ano' : usuario.turma.descricao)))}">Informática para Internet 4º ano</p>
+
+          <nav class="account-nav" aria-label="Menu da conta">
+            <a class="active" th:href="@{/perfil}" href="/perfil">Meus dados</a>
+            <a th:href="@{/compras}" href="/compras">Minhas compras</a>
+            <a th:href="@{/anuncios}" href="/anuncios">Meus anúncios</a>
+            <a th:href="@{/perfil/editar}" href="/perfil/editar">Editar dados</a>
+          </nav>
+
+          <button class="account-logout" type="button" data-logout-open>Sair da conta</button>
+        </aside>
+
+        <section class="account-card" aria-labelledby="account-data-title">
+          <h2 id="account-data-title">Meus dados</h2>
+          <p class="account-card-description">Informações acadêmicas e de contato.</p>
+
+          <div class="account-details">
+            <div class="account-field">
+              <span>Nome</span>
+              <div th:text="${usuario.nome}">Lucas</div>
+            </div>
+
+            <div class="account-field">
+              <span>Sobrenome</span>
+              <div th:text="${usuario.sobrenome != null and !usuario.sobrenome.isEmpty() ? usuario.sobrenome : 'Não informado'}">Rodrigues</div>
+            </div>
+
+            <div class="account-field">
+              <span>Telefone</span>
+              <div th:text="${usuario.telefone != null and !usuario.telefone.isEmpty() ? usuario.telefone : 'Não informado'}">Não informado</div>
+            </div>
+
+            <div class="account-field">
+              <span>Turma</span>
+              <div th:text="${usuario.turma != null ? usuario.turma.nomeTurma : 'Não informada'}">INI4</div>
+            </div>
+
+            <div class="account-field">
+              <span>E-mail institucional</span>
+              <div th:text="${usuario.email}">aluno@ifsp.edu.br</div>
+            </div>
+
+            <div class="account-field">
+              <span>Chave Pix (para receber vendas)</span>
+              <div th:text="${usuario.chavePix != null and !usuario.chavePix.isEmpty() ? usuario.chavePix : 'Não informada'}">Não informada</div>
+            </div>
+
+            <div class="account-field account-availability-field">
+              <span>Disponibilidade</span>
+              <div th:text="${usuario.disponibilidade != null ? (usuario.disponibilidade.name() == 'intervalo' ? 'Intervalo' : (usuario.disponibilidade.name() == 'manha' ? 'Manhã' : 'Tarde')) : 'Não informada'}">Não informada</div>
+            </div>
+
+            <div class="account-field">
+              <span>Foto de perfil (URL)</span>
+              <div th:text="${usuario.imagem != null and !usuario.imagem.isEmpty() ? usuario.imagem : 'Não informada'}">Não informada</div>
+            </div>
+
+            <div class="account-field account-field-wide">
+              <span>Sobre você</span>
+              <div th:text="${usuario.descricao != null and !usuario.descricao.isEmpty() ? usuario.descricao : 'Conte um pouco sobre você (opcional)'}">Conte um pouco sobre você (opcional)</div>
+            </div>
+          </div>
+
+          <a class="account-save" th:href="@{/perfil/editar#dados}" href="/perfil/editar#dados">Editar dados</a>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="account-footer">
+    <span>Campus Marketplace • IFSP São Miguel Paulista</span>
+    <span>© 2026</span>
+  </footer>
+
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script>
+    (() => {
+      const body = document.body;
+      const items = document.querySelectorAll('.account-details .account-field, .account-availability, .account-save');
+      if (!items.length || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      body.classList.add('has-scroll-reveal');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+      items.forEach((item, index) => {
+        item.classList.add('scroll-reveal');
+        item.style.transitionDelay = `${Math.min(index % 4, 3) * 70}ms`;
+        observer.observe(item);
+      });
+    })();
+  </script>
+</body>
+</html>
+

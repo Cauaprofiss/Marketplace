@@ -1,0 +1,70 @@
+@import url('/Assets/css/Global.css');
+
+/* Avisos dos frames 1523:4959 e 1583:177 do Figma. */
+.campus-notice {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 76px;
+  margin: 0;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 0;
+  border-radius: 14px;
+  background: #205944;
+  color: #f7f6f2;
+  font: 16px/1.5 var(--FontePoppinsRegular), Arial, sans-serif;
+  text-align: left;
+  overflow-wrap: anywhere;
+  opacity: 1;
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.campus-notice::before {
+  content: "";
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  background: currentColor;
+  --notice-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 11.1V12a9 9 0 1 1-5.3-8.2'/%3E%3Cpath d='m8 11 3 3 10-10'/%3E%3C/svg%3E");
+  -webkit-mask: var(--notice-icon) center/contain no-repeat;
+  mask: var(--notice-icon) center/contain no-repeat;
+}
+.campus-notice--error {
+  background: #a92e26;
+  --notice-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v6m0 4v.1'/%3E%3C/svg%3E");
+}
+.campus-notice--error::before { --notice-icon: inherit; }
+.recovery-guidance { margin-top: 20px; color: #68746d; font: 13px/1.5 var(--FontePoppinsRegular), Arial, sans-serif; }
+.campus-notice:not([data-campus-notice-ready]),
+.campus-notice[hidden] { display: none; }
+.campus-notice.is-leaving { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.campus-notice.is-entering { animation: campus-notice-enter 250ms ease both; }
+.campus-notices {
+  position: fixed;
+  z-index: 1200;
+  right: 28px;
+  bottom: 28px;
+  width: min(640px, calc(100vw - 56px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+.campus-notice--toast {
+  width: 100%;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(23, 57, 47, .14);
+}
+@keyframes campus-notice-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media(max-width: 600px) {
+  .campus-notice { min-height: 64px; padding: 18px; gap: 12px; font-size: 14px; }
+  .campus-notices { right: 14px; bottom: 14px; width: calc(100vw - 28px); }
+}
+@media(prefers-reduced-motion: reduce) {
+  .campus-notice { transition: none; }
+  .campus-notice.is-entering { animation: none; }
+}

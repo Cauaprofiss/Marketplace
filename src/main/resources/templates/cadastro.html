@@ -1,81 +1,120 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br" xmlns:th="http://thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Criar conta — Campus Marketplace</title>
-<link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Marketplace - Cadastro</title>
+
+    <link rel="stylesheet" href="../Assets/css/TelaCadastro.css" th:href="@{/Assets/css/TelaCadastro.css}">
+    <script src="../Assets/JavaScript/Cadastro.js" th:src="@{/Assets/JavaScript/Cadastro.js}" defer></script> 
 </head>
+
 <body>
+    <!-- LADO ESQUERDO DA TELA -->
+    <div class="TelaLado__esquerda">
 
-<header class="header">
-    <div class="header__bar">
-        <a href="/index.html" class="brand">
-            Campus Marketplace <span class="brand__tag">MURAL</span>
-        </a>
-        <nav class="header__nav">
-            <a href="/login.html">Já tenho conta</a>
-        </nav>
-    </div>
-</header>
-
-<div class="tela-form">
-    <div class="painel-form">
-        <div class="painel-form__eyebrow">Novo cadastro</div>
-        <h1>Criar conta</h1>
-
-        <div class="mensagem-erro" id="erro-form"></div>
-
-        <form id="form-cadastro" action="/cadastro" method="post">
-            <div class="campo-linha">
-                <div class="campo">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" name="nome" required placeholder="João">
-                </div>
-                <div class="campo">
-                    <label for="sobrenome">Sobrenome</label>
-                    <input type="text" id="sobrenome" name="sobrenome" required placeholder="Silva">
-                </div>
+        <div class="Area__Logomarca">
+            <div class="Logo">
+                <img src="../Assets/Logos/LogoMarket.jpeg" th:src="@{/Assets/Logos/LogoMarket.jpeg}" alt="Logo Campus Marketplace">
             </div>
-
-            <div class="campo">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" required placeholder="voce@campus.edu.br">
-            </div>
-
-            <div class="campo">
-                <label for="telefone">Telefone</label>
-                <input type="tel" id="telefone" name="telefone" required placeholder="11999999999">
-            </div>
-
-            <div class="campo">
-                <label for="turma">Turma</label>
-				<select id="turma" name="turma.idTurma" required>
-
-				    <option value="">Selecione sua turma</option>
-
-				    <option th:each="t : ${turmas}"
-				            th:value="${t.idTurma}"
-				            th:text="${t.nomeTurma}">
-				    </option>
-
-				</select>
-            </div>
-
-            <div class="campo">
-                <label for="senha">Senha</label>
-                <input type="password" id="senha" name="senha" required minlength="6" placeholder="Mínimo de 6 caracteres">
-            </div>
-
-            <button type="submit" class="btn-primario">Criar conta</button>
-        </form>
-
-        <div class="form-rodape">
-            Já tem conta? <a href="/login.html">Entrar</a>
+            <h1 class="Titulo__login">Campus Marketplace</h1>
         </div>
-    </div>
-</div>
 
-<script>carregarTurmasNoSelect();</script>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <form class="Formulario__login" th:action="@{/cadastro}" method="post" id="formCadastro" novalidate>
+
+            <div class="Flex__NomeTurma">
+                <!-- NOME -->
+                <div class="Area__nome">
+                    <label for="Nome">Nome</label>
+                    <div class="campo-relativo">
+                        <input type="text" name="nome" id="Nome" placeholder="">
+                        <div class="balao-alerta" id="balaoNome">Preencha este campo.</div>
+                    </div>
+                </div>
+
+                <!-- SELECT TURMA (THYMELEAF) -->
+                <div class="Area__turma">
+                    <label for="Turma">Turma</label>
+                    <div class="campo-relativo">
+                        <select name="turma.idTurma" id="Turma">
+                            <option value="">Selecione sua turma</option>
+                            <option th:each="t : ${turmas}"
+                                    th:value="${t.idTurma}"
+                                    th:text="${t.nomeTurma}">
+                            </option>
+                        </select>
+                        <div class="balao-alerta" id="balaoTurma">Preencha este campo.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- E-MAIL -->
+            <div class="Area__email">
+                <label for="Cadastro-email">E-mail</label>
+                <div class="campo-relativo">
+                    <div class="flex__iconInput" id="areaEmail" th:classappend="${erroEmail} ? 'input-erro' : ''">
+                         <input type="text" inputmode="email" autocomplete="email" name="email" id="Cadastro-email"
+                                placeholder="" required th:value="${usuario != null ? usuario.email : ''}"
+                                th:attr="aria-invalid=${erroEmail != null}">
+                         <img src="../Assets/Icones/Email.png" th:src="@{/Assets/Icones/Email.png}" class="icone" alt="Ícone Email">
+                    </div>
+                    <div class="balao-alerta" id="balaoEmail">Preencha seu e-mail!</div>
+                </div>
+            </div>
+            
+            <!-- ERRO DE E-MAIL JÁ EXISTENTE -->
+            <span th:if="${erroEmail}" th:text="${erroEmail}" id="Mensagem__erroEmail" class="Erros"></span>
+
+            <!-- SENHAS -->
+            <div class="Flex__Senhas">
+                
+                <!-- SENHA -->
+                <div class="Area__senha">
+                    <label for="Cadastro-senha">Senha</label>                                   
+                    <div class="campo-relativo">
+                        <div class="flex__iconInputDivisoria" id="areaSenha">
+                            <input type="password" name="senha" id="Cadastro-senha" class="Cadastro-senha" placeholder="">
+                            
+                            <!-- Ícones: Olho e Cadeado -->
+                            <img src="../Assets/Icones/view.png" th:src="@{/Assets/Icones/view.png}" class="icone" id="imgOlhoSenha" style="cursor: pointer;" alt="Alternar Senha">
+                            <img src="../Assets/Icones/Cadeado.png" th:src="@{/Assets/Icones/Cadeado.png}" class="icone" alt="Ícone Cadeado">
+                        </div> 
+                        <div class="balao-alerta" id="balaoSenha">Preencha este campo.</div>
+                    </div>                                                                                                                                                                             
+                </div>
+
+                <!-- CONFIRMAR SENHA -->
+                <div class="Area__ConfirmSenha">
+                    <label for="ConfirmSenha">Confirmar Senha</label>
+                    <div class="campo-relativo">
+                        <div class="flex__iconInputDivisoria" id="areaConfirmSenha">
+                            <input type="password" name="confSenha" id="ConfirmSenha" placeholder="">
+                            
+                            <!-- Ícones: Olho e Cadeado -->
+                            <img src="../Assets/Icones/view.png" th:src="@{/Assets/Icones/view.png}" class="icone" id="imgOlhoConfirmSenha" style="cursor: pointer;" alt="Alternar Senha">
+                            <img src="../Assets/Icones/Cadeado.png" th:src="@{/Assets/Icones/Cadeado.png}" class="icone" alt="Ícone Cadeado">
+                        </div> 
+                        <div class="balao-alerta" id="balaoConfirmSenha">Preencha este campo.</div>
+                    </div>       
+                </div>
+            </div>
+
+            <!-- ERRO DE SENHAS DIFERENTES OU CURTAS -->           
+            <span id="Mensagem__erroSenhas" class="Erros" th:classappend="${erro} ? 'input-erro' : ''" ></span>
+
+            <input type="submit" value="Cadastre-se" class="Botao__entrar">
+            <p class="PossuiConta">Já possui uma conta?<a th:href="@{/login}"> Entre</a></p>
+
+        </form>
+    </div>
+
+    <!-- LADO DIREITO DA TELA -->
+    <div class="TelaLado__direita">
+        <div class="AreaTexto_principal"><p>Busque.</p><p>Compre.</p><p>Conecte-se.</p></div>
+        <div class="AreaTexto_secundario"><p>Entre na vitrine do campus e faça,</p><p>parte dessa rede.</p></div>
+        <div class="Ball__decoration"></div>
+    </div>
 </body>
 </html>

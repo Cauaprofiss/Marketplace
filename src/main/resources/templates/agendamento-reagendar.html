@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reagendar retirada — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/agendamentos.css}" href="/Assets/css/agendamentos.css">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="schedule-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main class="reschedule-main">
+    <a class="reschedule-back" th:href="@{/agendamentos}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H4m7 7-7-7 7-7"/></svg>
+      Meus agendamentos
+    </a>
+
+    <h1 th:text="${'Escolha uma nova data para a ' + #strings.toLowerCase(agendamento.tipo.label)}">Escolha uma nova data para a retirada</h1>
+    <p class="reschedule-description">O intervalo definido pelo vendedor será mantido no reagendamento —<br class="desktop-break"> tudo pronto para a retirada acontecer sem desencontro.</p>
+    <div th:if="${erroAgendamento != null}" th:text="${erroAgendamento}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+
+    <div class="reschedule-layout">
+      <section class="reschedule-card">
+        <form th:action="@{/agendamentos/{id}/atualizar(id=${agendamento.idAgendamento})}" method="post">
+          <div class="schedule-field">
+            <label for="scheduleOrder">Pedido</label>
+            <div class="schedule-input-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l2 14H3L5 7Z"/><path d="M8 8V5a4 4 0 0 1 8 0v3"/></svg><input id="scheduleOrder" type="text" readonly
+                   th:value="${'Pedido CM-' + agendamento.compraVendedor.compra.idCompra + ' • ' + (ehVendedor ? agendamento.comprador.nome : agendamento.vendedor.nome)}"></div>
+          </div>
+
+          <div class="schedule-field-grid">
+            <div class="schedule-field">
+              <label for="scheduleDate">Data</label>
+              <input id="scheduleDate" type="date" name="dataAgendada" required
+                     th:value="${agendamento.dataAgendada}" th:min="${dataMinima}">
+            </div>
+            <div class="schedule-field">
+              <label for="scheduleTime">Disponibilidade</label>
+              <input id="scheduleTime" type="text" readonly
+                     th:value="${disponibilidadeRetirada != null ? disponibilidadeRetirada.descricao : #temporals.format(agendamento.horario, 'HH:mm')}">
+              <input type="hidden" name="horario"
+                     th:value="${disponibilidadeRetirada != null ? disponibilidadeRetirada.horarioInicio : agendamento.horario}">
+            </div>
+          </div>
+
+          <div class="schedule-field">
+            <label for="schedulePlace">Local da retirada</label>
+            <input id="schedulePlace" type="text" readonly th:unless="${ehVendedor}"
+                   th:value="${agendamento.localRetirada != null ? agendamento.localRetirada.label : 'A combinar'}">
+            <select id="schedulePlace" name="localRetirada" th:if="${ehVendedor}">
+              <option value="patio_interno" th:selected="${agendamento.localRetirada != null and agendamento.localRetirada.name() == 'patio_interno'}">Pátio Interno</option>
+              <option value="patio_externo" th:selected="${agendamento.localRetirada != null and agendamento.localRetirada.name() == 'patio_externo'}">Pátio Externo</option>
+              <option value="quadra" th:selected="${agendamento.localRetirada != null and agendamento.localRetirada.name() == 'quadra'}">Quadra</option>
+            </select>
+          </div>
+
+          <button class="reschedule-submit" type="submit">Salvar reagendamento</button>
+        </form>
+      </section>
+
+      <aside class="reschedule-visual" aria-hidden="true">
+        <img th:src="@{/Assets/Icones/reagendamento-calendario.svg}" src="/Assets/Icones/reagendamento-calendario.svg" alt="">
+      </aside>
+    </div>
+  </main>
+
+  <footer class="schedule-footer">Campus MarketPlace</footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body>
+</html>
+

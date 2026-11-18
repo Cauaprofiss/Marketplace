@@ -1,51 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br" xmlns:th="http://thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Entrar — Campus Marketplace</title>
-<link rel="stylesheet" href="/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Marketplace - Login</title>
+    
+    <link rel="stylesheet" href="https://cloudflare.com"/>
+    <link rel="stylesheet" href="../Assets/css/TelaLogin.css" th:href="@{/Assets/css/TelaLogin.css}">
+    <script src="../Assets/JavaScript/TelaLogin.js" th:src="@{/Assets/JavaScript/TelaLogin.js}" defer></script> 
 </head>
+
 <body>
+    <!-- LADO ESQUERDO DA TELA -->
+    <div class="TelaLado__esquerda">
 
-<header class="header">
-    <div class="header__bar">
-        <a href="/index.html" class="brand">
-            Campus Marketplace <span class="brand__tag">MURAL</span>
-        </a>
-        <nav class="header__nav">
-            <a href="/cadastro.html">Criar conta</a>
-        </nav>
-    </div>
-</header>
-
-<div class="tela-form">
-    <div class="painel-form">
-        <div class="painel-form__eyebrow">Acesso de aluno</div>
-        <h1>Entrar</h1>
-
-        <div class="mensagem-erro" id="erro-form"></div>
-
-        <form id="form-login" onsubmit="tratarLogin(event)">
-            <div class="campo">
-                <label for="email">E-mail acadêmico</label>
-                <input type="email" id="email" required placeholder="voce@campus.edu.br">
+        <div class="Area__Logomarca">
+            <div class="Logo">
+                <img src="../Assets/Logos/LogoMarket.jpeg" th:src="@{/Assets/Logos/LogoMarket.jpeg}" alt="Logo Campus Marketplace">
             </div>
-            <div class="campo">
-                <label for="senha">Senha</label>
-                <input type="password" id="senha" required placeholder="••••••••">
-            </div>
-            <button type="submit" class="btn-primario">Entrar</button>
-        </form>
-
-        <div class="form-rodape">
-            Esqueceu a senha? <a href="/recuperar-senha.html">Recuperar acesso</a><br><br>
-            Ainda não tem conta? <a href="/cadastro.html">Cadastre-se</a>
+            <h1 class="Titulo__login">Campus Marketplace</h1>
         </div>
-    </div>
-</div>
 
-<script src="/js/api.js"></script>
-<script src="/js/auth.js"></script>
+        <!-- FORMULÁRIO -->
+		<form class="Formulario__login" th:action="@{/login}" method="post" id="formLogin" novalidate>
+		    <div class="Area__textoEntrar">
+		        <p class="TituloSecundario__login">Entrar</p>
+		        <p class="TituloTerciario__login">Acesse sua conta institucional.</p>
+		    </div>   
+
+		    <!-- CAMPO EMAIL -->
+		    <div class="Area__email">
+		        <label for="Login-email">E-mail</label>
+                <div class="campo-relativo">
+                    <div class="flex__iconInput" id="areaEmail" th:classappend="${erro} ? 'input-erro' : ''">
+                        <input type="text" inputmode="email" autocomplete="email" name="email" id="Login-email"
+                               placeholder="" required th:value="${email}" th:attr="aria-invalid=${erro != null}">
+                        <img src="../Assets/Icones/Email.png" th:src="@{/Assets/Icones/Email.png}" class="icone" alt="Ícone de Email">
+                    </div>
+                    <!-- BALÃO DE EMAIL SOBREPOSTO -->
+                    <div class="balao-alerta" id="balaoEmail">Preencha seu e-mail!</div>
+                </div>
+		    </div>
+
+		    <!-- CAMPO SENHA -->
+		    <div class="Area__senha">
+		         <label for="Login-senha">Senha</label>
+                 <div class="campo-relativo">
+                     <div class="flex__iconInput" id="areaSenha" th:classappend="${erro} ? 'input-erro' : ''">
+                         <input type="password" autocomplete="current-password" name="senha" id="Login-senha"
+                                placeholder="" required th:attr="aria-invalid=${erro != null}">
+                         <img src="../Assets/Icones/view.png" th:src="@{/Assets/Icones/view.png}" class="icone" id="ImgSenha" style="cursor: pointer;" alt="Alternar Visibilidade">  
+                         <img src="../Assets/Icones/Cadeado.png" th:src="@{/Assets/Icones/Cadeado.png}" class="icone" alt="Ícone de Cadeado">
+                     </div>
+                     <!-- BALÃO DE SENHA SOBREPOSTO -->
+                     <div class="balao-alerta" id="balaoSenha">Digite sua senha!</div>
+                 </div>
+		    </div>
+
+		    <!-- MENSAGEM DE ERRO (SPRING / THYMELEAF) -->
+		    <div class="Flex__containerErro">
+		        <span class="Erros" id="Mensagem__erroSenhaLogin" th:if="${erro}" th:text="${erro}"></span>
+		        <p class="Esqueci__senha"><a th:href="@{/recuperar-senha}">Esqueci minha senha</a></p>
+		    </div>
+
+		    <input type="submit" value="Entrar" class="Botao__entrar">
+		    <p class="NaoPossuiConta">Ainda não tem conta?<a th:href="@{/cadastro}"> Cadastre-se</a></p>
+		</form>
+
+    </div>
+
+    <!-- LADO DIREITO DA TELA -->
+    <div class="TelaLado__direita">
+        <div class="AreaTexto_principal"><p>Compre.</p><p>Venda.</p><p>Conecte-se.</p></div>
+        <div class="AreaTexto_secundario"><p>Uma vitrine feita por estudantes,</p><p>para estudantes.</p></div>
+        <div class="Ball__decoration"></div>
+    </div>
 </body>
 </html>

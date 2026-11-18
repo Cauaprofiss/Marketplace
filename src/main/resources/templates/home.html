@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true"><symbol id="favorite-heart" viewBox="0 0 24 24"><path d="M20.8 4.8a5.5 5.5 0 0 0-7.8 0L12 5.9l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.7 1.1-1.1a5.5 5.5 0 0 0-.1-7.4Z"/></symbol></svg>
+
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+
+  <main>
+    <div class="campus-notice" data-campus-notice hidden role="status" th:if="${sucesso != null}" th:text="${sucesso}"></div>
+    <div class="campus-notice campus-notice--error" data-campus-notice hidden role="alert" th:if="${erro != null}" th:text="${erro}"></div>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1 id="hero-title">Tudo que você<br><em>precisa</em> dentro<br>do campus</h1>
+          <p>Encontre produtos, serviços e campanhas criados<br>por estudantes do próprio câmpus.</p>
+
+          <div class="hero-buttons">
+            <a class="button button-primary" th:href="@{/produtos}" href="/produtos">Explorar vitrine</a>
+            <a class="button button-outline" th:href="@{/anuncios/novo}" href="/anuncios/novo">Quero vender</a>
+          </div>
+
+          <small>Encontre produtos, serviços e<br>campanhas criados</small>
+        </div>
+
+        <div class="hero-products" aria-label="Produtos disponíveis no campus">
+          <span class="refresh-label" th:unless="${#lists.isEmpty(produtosMini)}">anúncios mais recentes</span>
+
+          <article class="mini-product"
+                   th:each="produto : ${produtosMini}"
+                   th:with="media=${mediasAvaliacoesProduto[produto.idProduto]}"
+                   th:attr="data-product-url=@{/produtos/{id}(id=${produto.idProduto})}">
+            <img th:if="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+                 th:src="@{${produto.fotoUrl}}"
+                 th:alt="${produto.nome}">
+            <span class="home-card-placeholder"
+                  th:unless="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+                  aria-hidden="true">□</span>
+            <button class="favorite-button" type="button"
+                    th:classappend="${favoritosIds != null and favoritosIds.contains(produto.idProduto)} ? ' is-favorite' : ''"
+                    th:attr="data-product-id=${produto.idProduto},aria-label=${'Favoritar ' + produto.nome},aria-pressed=${favoritosIds != null and favoritosIds.contains(produto.idProduto)}">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+            <h2 th:text="${produto.nome}">Produto</h2>
+            <p><i></i>
+              <span th:text="${(produto.usuario != null ? produto.usuario.nome : 'Aluno IFSP') + ' · ' + (produto.status.name() == 'disponivel' ? 'disponível' : 'indisponível')}">Aluno IFSP · disponível</span>
+            </p>
+            <div>
+              <strong th:text="${produto.preco != null ? 'R$ ' + #numbers.formatDecimal(produto.preco, 1, 2, 'COMMA') : 'R$ 0,00'}">R$ 0,00</strong>
+              <span class="product-rating-summary"
+                    th:attr="aria-label=${media != null and media > 0 ? 'Avaliação média ' + #numbers.formatDecimal(media, 1, 1, 'COMMA') + ' de 5' : 'Produto ainda sem avaliações'}">
+                <b aria-hidden="true">★</b><em th:text="${media != null and media > 0 ? #numbers.formatDecimal(media, 1, 1, 'COMMA') : '—'}">—</em>
+              </span>
+            </div>
+          </article>
+
+          <div class="home-empty hero-empty" th:if="${#lists.isEmpty(produtosMini)}">
+            <strong>Nenhum anúncio disponível ainda.</strong>
+            <span>Os produtos publicados aparecerão aqui.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured" aria-labelledby="featured-title">
+      <div class="section-heading light">
+        <h2 id="featured-title">Sua Venda Facilitada</h2>
+        <p>Do anúncio à entrega: anúncios em destaque para melhorar o seu dia e o do vendedor.</p>
+      </div>
+
+      <div class="featured-carousel" th:if="${!#lists.isEmpty(anunciosDestaque)}">
+        <button class="featured-arrow previous" type="button" aria-label="Anúncio anterior">‹</button>
+
+        <div class="featured-shell has-product" data-featured-carousel>
+          <div class="featured-slide"
+               th:each="anuncio, estado : ${anunciosDestaque}"
+               th:with="fotos=${fotosAnunciosDestaque[anuncio.idProduto]},media=${mediasAvaliacoesProduto[anuncio.idProduto]}"
+               th:classappend="${estado.first} ? ' active'"
+               th:attr="aria-hidden=${!estado.first}">
+            <article class="featured-copy">
+              <span>Anúncios em destaque</span>
+              <h3 th:text="${anuncio.nome}">Produto</h3>
+              <strong th:text="${anuncio.categoria != null ? anuncio.categoria.nome : 'Produto'}">Produto</strong>
+              <p th:text="${anuncio.descricao != null and !#strings.isEmpty(anuncio.descricao) ? anuncio.descricao : 'Confira os detalhes deste anúncio publicado no campus.'}">Descrição do produto.</p>
+              <small th:text="${(anuncio.usuario != null ? anuncio.usuario.nome : 'Aluno IFSP') + (anuncio.usuario != null and anuncio.usuario.turma != null ? ' · ' + anuncio.usuario.turma.nomeTurma : '')}">Aluno IFSP</small>
+              <span class="product-rating-placeholder featured-rating"
+                    th:attr="aria-label=${media != null and media > 0 ? 'Avaliação média ' + #numbers.formatDecimal(media, 1, 1, 'COMMA') + ' de 5' : 'Produto ainda sem avaliações'}">
+                <b aria-hidden="true">★</b><em th:text="${media != null and media > 0 ? #numbers.formatDecimal(media, 1, 1, 'COMMA') : '—'}">—</em><small th:text="${media != null and media > 0 ? 'de 5' : 'Sem avaliações'}">Sem avaliações</small>
+              </span>
+              <a th:href="@{/produtos/{id}(id=${anuncio.idProduto})}" href="/produtos">Comprar</a>
+            </article>
+
+            <div class="featured-visual">
+              <img class="featured-main-image"
+                   th:if="${fotos != null and !#lists.isEmpty(fotos)}"
+                   th:src="@{${fotos[0]}}"
+                   th:alt="${anuncio.nome}">
+              <span class="featured-image-placeholder"
+                    th:unless="${fotos != null and !#lists.isEmpty(fotos)}"
+                    aria-hidden="true">□</span>
+              <div class="featured-thumbs"
+                   th:if="${fotos != null and !#lists.isEmpty(fotos)}"
+                   th:classappend="${#lists.size(fotos) == 1} ? ' single'"
+                   th:attr="aria-label=${'Fotos de ' + anuncio.nome}">
+                <button type="button"
+                        th:each="foto, fotoEstado : ${fotos}"
+                        th:classappend="${fotoEstado.first} ? ' active'"
+                        th:attr="data-featured-image=${foto},aria-label=${'Ver foto ' + (fotoEstado.index + 1) + ' de ' + anuncio.nome}">
+                  <img th:src="@{${foto}}" alt="" loading="lazy">
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-dots" role="group" aria-label="Escolher anúncio em destaque">
+            <button type="button"
+                    th:each="anuncio, estado : ${anunciosDestaque}"
+                    th:classappend="${estado.first} ? ' active'"
+                    th:attr="data-feature-index=${estado.index},aria-label=${'Exibir anúncio ' + (estado.index + 1) + ': ' + anuncio.nome},aria-pressed=${estado.first}"></button>
+          </div>
+        </div>
+
+        <button class="featured-arrow next" type="button" aria-label="Próximo anúncio">›</button>
+      </div>
+
+      <div class="featured-shell is-empty" th:if="${#lists.isEmpty(anunciosDestaque)}">
+        <div class="home-empty featured-empty">
+          <strong>Nenhum anúncio em destaque.</strong>
+          <span>Quando um produto for publicado, ele aparecerá aqui.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="showcase" id="vitrine" aria-labelledby="showcase-title">
+      <div class="section-heading">
+        <h2 id="showcase-title">Vitrine do Campus</h2>
+      </div>
+
+      <div class="category-tabs" role="group" aria-label="Categorias">
+        <button class="active" type="button" data-category="todos">Todos</button>
+        <button type="button"
+                th:each="categoria : ${categoriasHome}"
+                th:attr="data-category=${categoria.idCategoria}"
+                th:text="${categoria.nome}">Categoria</button>
+      </div>
+
+      <div class="showcase-grid">
+        <article class="store-card"
+                 th:each="produto : ${produtosHome}"
+                 th:with="media=${mediasAvaliacoesProduto[produto.idProduto]}"
+                 th:attr="data-category=${produto.categoria != null ? produto.categoria.idCategoria : 'sem-categoria'},data-product-url=@{/produtos/{id}(id=${produto.idProduto})}">
+          <img th:if="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+               th:src="@{${produto.fotoUrl}}"
+               th:alt="${produto.nome}">
+          <span class="home-card-placeholder"
+                th:unless="${produto.fotoUrl != null and !#strings.isEmpty(produto.fotoUrl)}"
+                aria-hidden="true">□</span>
+          <button class="favorite-button" type="button"
+                  th:classappend="${favoritosIds != null and favoritosIds.contains(produto.idProduto)} ? ' is-favorite' : ''"
+                  th:attr="data-product-id=${produto.idProduto},aria-label=${'Favoritar ' + produto.nome},aria-pressed=${favoritosIds != null and favoritosIds.contains(produto.idProduto)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+          </button>
+          <h3 th:text="${produto.nome}">Produto</h3>
+          <p><i></i>
+            <span th:text="${(produto.usuario != null ? produto.usuario.nome : 'Aluno IFSP') + ' · ' + (produto.status.name() == 'disponivel' ? 'disponível' : 'indisponível')}">Aluno IFSP · disponível</span>
+          </p>
+          <div>
+            <strong th:text="${produto.preco != null ? 'R$ ' + #numbers.formatDecimal(produto.preco, 1, 2, 'COMMA') : 'R$ 0,00'}">R$ 0,00</strong>
+            <span class="product-rating-summary"
+                  th:attr="aria-label=${media != null and media > 0 ? 'Avaliação média ' + #numbers.formatDecimal(media, 1, 1, 'COMMA') + ' de 5' : 'Produto ainda sem avaliações'}">
+              <b aria-hidden="true">★</b><em th:text="${media != null and media > 0 ? #numbers.formatDecimal(media, 1, 1, 'COMMA') : '—'}">—</em>
+            </span>
+          </div>
+        </article>
+
+        <th:block th:remove="all">
+        <article class="store-card" data-category="doces">
+          <img src="/Assets/Logos/home-asset-06.png" alt="Brownie artesanal">
+          <h3>Brownie artesanal</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 8,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar brownie" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="material">
+          <img src="/Assets/Logos/home-asset-07.png" alt="Mochila urbana">
+          <h3>Mochila urbana</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 75,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar mochila" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="material">
+          <img src="/Assets/Logos/home-asset-08.png" alt="Caderno personalizado">
+          <h3>Caderno personalizado</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 24,90</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar caderno" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="eletronicos">
+          <img src="/Assets/Logos/home-asset-05.png" alt="Fone bluetooth">
+          <h3>Fone bluetooth</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 45,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar fone" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="material">
+          <img src="/Assets/Logos/home-asset-09.png" alt="Livros para vestibular">
+          <h3>Livros para vestibular</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 30,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar livros" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="artesanato">
+          <img src="/Assets/Logos/home-asset-10.png" alt="Pulseiras artesanais">
+          <h3>Pulseiras artesanais</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 10,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar pulseiras" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="doces">
+          <img src="/Assets/Logos/home-asset-11.png" alt="Caixa de mini donuts">
+          <h3>Caixa de mini donuts</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 18,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar donuts" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="doces">
+          <img src="/Assets/Logos/home-asset-00.png" alt="Bolo de chocolate">
+          <h3>Bolo de chocolate</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 12,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar bolo" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <article class="store-card" data-category="doces">
+          <img src="/Assets/Logos/home-asset-06.png" alt="Brownie artesanal">
+          <h3>Brownie artesanal</h3>
+          <p><i></i> Aluno IFSP · disponível</p>
+          <div>
+            <strong>R$ 8,00</strong>
+            <button class="favorite-button" type="button" aria-label="Favoritar brownie" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#favorite-heart"/></svg>
+            </button>
+          </div>
+        </article>
+        </th:block>
+
+        <div class="home-empty showcase-empty" th:if="${#lists.isEmpty(produtosHome)}">
+          <strong>Nenhum produto na vitrine.</strong>
+          <span>Os anúncios publicados aparecerão aqui.</span>
+        </div>
+      </div>
+
+      <a class="button all-products" th:href="@{/produtos}" href="/produtos">Ver todos os produtos</a>
+    </section>
+
+    <section class="community" id="comunidade" aria-labelledby="community-title">
+      <div class="section-heading light">
+        <h2 id="community-title">Quem movimenta o câmpus</h2>
+        <p>Histórias de quem compra, vende e faz o campus acontecer.</p>
+      </div>
+
+      <div class="testimonials-carousel" role="region" aria-label="Depoimentos de alunos">
+        <button class="testimonial-arrow" type="button" data-testimonial-direction="previous" aria-label="Depoimento anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 5 12l10 8z"/></svg></button>
+        <div class="testimonials" data-testimonials role="list">
+          <article class="testimonial-card" role="listitem">
+            <div class="testimonial-person"><span class="testimonial-avatar">AS</span><div><h3>Ana Souza</h3><small>Vendedora · Informática (INI4)</small></div></div>
+            <div class="testimonial-stars" role="img" aria-label="5 de 5 estrelas">★★★★★</div>
+            <p>“Comecei vendendo brigadeiros e brownies para alguns amigos. Hoje, a Campus me ajuda a alcançar gente de outros cursos e a transformar meu talento em renda.”</p>
+          </article>
+
+          <article class="testimonial-card is-featured" role="listitem">
+            <div class="testimonial-person"><span class="testimonial-avatar">JI</span><div><h3>Júlia Ito</h3><small>Compradora · Informática (INI3)</small></div></div>
+            <div class="testimonial-stars" role="img" aria-label="5 de 5 estrelas">★★★★★</div>
+            <p>“Já encontrei livros que precisava por um preço justo e conheci projetos incríveis. É bom saber que cada compra apoia alguém que estuda comigo.”</p>
+          </article>
+
+          <article class="testimonial-card" role="listitem">
+            <div class="testimonial-person"><span class="testimonial-avatar">RM</span><div><h3>Rafael Melo</h3><small>Vendedor · Informática (INI2)</small></div></div>
+            <div class="testimonial-stars" role="img" aria-label="5 de 5 estrelas">★★★★★</div>
+            <p>“Eu sempre quis começar a vender na faculdade. Agora divulgo meus produtos, recebo pedidos e conheço novos clientes do próprio campus.”</p>
+          </article>
+        </div>
+        <button class="testimonial-arrow" type="button" data-testimonial-direction="next" aria-label="Próximo depoimento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 10 8-10 8z"/></svg></button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <small>Campus</small>
+        <strong>MarketPlace</strong>
+        <p>Vendas entre estudantes do IFSP.<br>Feito por estudantes, para estudantes.</p>
+      </div>
+
+      <nav aria-label="Links para compradores">
+        <strong>Comprar</strong>
+        <a th:href="@{/produtos}" href="/produtos">Vitrine</a>
+        <a th:href="@{/produtos}" href="/produtos">Categorias</a>
+        <a th:href="@{/produtos}" href="/produtos">Favoritos</a>
+      </nav>
+
+      <nav aria-label="Links para vendedores">
+        <strong>Vender</strong>
+        <a th:href="@{/anuncios/novo}" href="/anuncios/novo">Criar anúncio</a>
+        <a th:href="@{/anuncios}" href="/anuncios">Meus anúncios</a>
+        <a th:href="@{/compras}" href="/compras">Pedidos</a>
+      </nav>
+
+      <nav aria-label="Links da comunidade">
+        <strong>Comunidade</strong>
+        <a href="#comunidade">Sobre</a>
+        <a href="#inicio">Segurança</a>
+        <a href="#inicio">Privacidade</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script>
+    (() => {
+      const carousel = document.querySelector('.testimonials-carousel');
+      const track = carousel?.querySelector('[data-testimonials]');
+      if (!carousel || !track) return;
+      let testimonialTimer;
+
+      const moveTestimonials = direction => {
+        const cards = [...track.children];
+        const before = new Map(cards.map(card => [card, card.getBoundingClientRect()]));
+        if (direction === 'next') track.append(track.firstElementChild);
+        else track.prepend(track.lastElementChild);
+        const mobile = window.matchMedia('(max-width: 1100px)').matches;
+        [...track.children].forEach((card, index) => card.classList.toggle('is-featured', !mobile && index === 1));
+
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          [...track.children].forEach(card => {
+            const from = before.get(card);
+            const to = card.getBoundingClientRect();
+            if (!from || !to.width || !to.height) return;
+            const animation = card.animate([
+              { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`, opacity: .72 },
+              { transform: 'translate(0, 0) scale(1, 1)', opacity: 1 }
+            ], { duration: 900, easing: 'cubic-bezier(.22,1,.36,1)' });
+            animation.onfinish = () => animation.cancel();
+          });
+        }
+      };
+
+      const startTestimonials = () => {
+        clearInterval(testimonialTimer);
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && !document.hidden &&
+            !carousel.matches(':hover') && !carousel.contains(document.activeElement)) {
+          testimonialTimer = setInterval(() => moveTestimonials('next'), 8000);
+        }
+      };
+
+      carousel.querySelectorAll('[data-testimonial-direction]').forEach(button => {
+        button.addEventListener('click', () => {
+          const direction = button.dataset.testimonialDirection;
+          moveTestimonials(direction);
+          startTestimonials();
+        });
+      });
+      carousel.addEventListener('mouseenter', () => clearInterval(testimonialTimer));
+      carousel.addEventListener('mouseleave', startTestimonials);
+      carousel.addEventListener('focusin', () => clearInterval(testimonialTimer));
+      carousel.addEventListener('focusout', event => {
+        if (!carousel.contains(event.relatedTarget)) startTestimonials();
+      });
+      document.addEventListener('visibilitychange', startTestimonials);
+      startTestimonials();
+    })();
+  </script>
+  <script>
+    document.querySelectorAll('.favorite-button[data-product-id]').forEach(button => {
+      button.addEventListener('click', async event => {
+        event.stopPropagation();
+        if (button.disabled) return;
+        button.disabled = true;
+        try {
+          const response = await fetch(`/favoritos/${button.dataset.productId}/alternar`, { method: 'POST' });
+          if (response.status === 401) { window.location.href = '/login'; return; }
+          if (!response.ok) throw new Error('Não foi possível atualizar os favoritos.');
+          const result = await response.json();
+          button.classList.toggle('is-favorite', result.favorito);
+          button.setAttribute('aria-pressed', String(result.favorito));
+          CampusFeedback.success(result.favorito ? 'Produto adicionado aos favoritos.' : 'Produto removido dos favoritos.');
+        } catch {
+          CampusFeedback.error('Não foi possível atualizar os favoritos. Tente novamente.');
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+
+    const productsUrl = document.querySelector('.all-products').href;
+
+    document.querySelectorAll('.mini-product,.store-card').forEach(card => {
+      card.setAttribute('role', 'link');
+      card.tabIndex = 0;
+
+      const openProduct = () => {
+        window.location.href = card.dataset.productUrl || productsUrl;
+      };
+
+      card.addEventListener('click', event => {
+        if (!event.target.closest('button')) {
+          openProduct();
+        }
+      });
+
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openProduct();
+        }
+      });
+    });
+
+    document.querySelectorAll('.category-tabs button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.category-tabs button').forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+
+        const category = button.dataset.category;
+
+        document.querySelectorAll('.store-card').forEach(card => {
+          card.hidden = category !== 'todos' && card.dataset.category !== category;
+        });
+      });
+    });
+
+    const featuredSlides = [...document.querySelectorAll('.featured-slide')];
+    const featuredDots = [...document.querySelectorAll('.feature-dots button')];
+    const featuredShell = document.querySelector('.featured-shell.has-product');
+    const featuredPrevious = document.querySelector('.featured-arrow.previous');
+    const featuredNext = document.querySelector('.featured-arrow.next');
+
+    if (featuredSlides.length > 0) {
+      let featuredIndex = 0;
+      let carouselTimer;
+
+      const startFeaturedCarousel = () => {
+        clearInterval(carouselTimer);
+
+        if (featuredSlides.length > 1 &&
+            !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          carouselTimer = setInterval(() => selectFeatured(featuredIndex + 1, false), 5000);
+        }
+      };
+
+      const selectFeatured = (index, restart = true) => {
+        featuredIndex = (index + featuredSlides.length) % featuredSlides.length;
+
+        featuredSlides.forEach((slide, slideIndex) => {
+          const active = slideIndex === featuredIndex;
+          slide.classList.toggle('active', active);
+          slide.setAttribute('aria-hidden', String(!active));
+        });
+
+        featuredDots.forEach((dot, dotIndex) => {
+          const active = dotIndex === featuredIndex;
+          dot.classList.toggle('active', active);
+          dot.setAttribute('aria-pressed', String(active));
+        });
+
+        if (restart) {
+          startFeaturedCarousel();
+        }
+      };
+
+      featuredDots.forEach((button, buttonIndex) => {
+        button.addEventListener('click', () => selectFeatured(buttonIndex));
+      });
+
+      featuredSlides.forEach(slide => {
+        const mainImage = slide.querySelector('.featured-main-image');
+        const imageButtons = [...slide.querySelectorAll('[data-featured-image]')];
+
+        imageButtons.forEach(button => {
+          button.addEventListener('click', event => {
+            event.stopPropagation();
+            if (!mainImage || button.classList.contains('active')) return;
+
+            imageButtons.forEach(item => item.classList.remove('active'));
+            button.classList.add('active');
+            mainImage.classList.add('changing');
+
+            setTimeout(() => {
+              mainImage.src = button.dataset.featuredImage;
+              mainImage.classList.remove('changing');
+            }, 120);
+          });
+        });
+      });
+
+      featuredPrevious?.addEventListener('click', () => selectFeatured(featuredIndex - 1));
+      featuredNext?.addEventListener('click', () => selectFeatured(featuredIndex + 1));
+      featuredShell?.addEventListener('mouseenter', () => clearInterval(carouselTimer));
+      featuredShell?.addEventListener('mouseleave', startFeaturedCarousel);
+
+      selectFeatured(0);
+    }
+
+  </script>
+</body>
+</html>
+

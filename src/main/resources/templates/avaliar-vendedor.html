@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Avaliar vendedor - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/avaliacoes.css(v='20261013-full-image')}" href="/Assets/css/avaliacoes.css?v=20261013-full-image">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="rating-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="rating-main">
+    <header class="rating-heading"><small>Campus Marketplace</small><h1>Avaliar Vendedor</h1><p>Sua experiência ajuda a fortalecer a comunidade.</p></header>
+    <div th:if="${erro != null}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+    <form class="rating-panel seller-rating-panel" th:action="@{/compras/{id}/avaliar-vendedor(id=${idCompraVendedor})}" method="post">
+      <section class="seller-rating-summary">
+        <div class="seller-rating-identity"><span class="seller-rating-avatar" th:text="${#strings.substring(grupo.vendedor.nome,0,1) + (grupo.vendedor.sobrenome != null and !#strings.isEmpty(grupo.vendedor.sobrenome) ? #strings.substring(grupo.vendedor.sobrenome,0,1) : '')}">AS</span><div><h2 th:text="${grupo.vendedor.nome + (grupo.vendedor.sobrenome != null ? ' ' + grupo.vendedor.sobrenome : '')}">Ana Souza</h2><p th:text="${grupo.vendedor.turma != null ? grupo.vendedor.turma.nomeTurma : 'Aluno IFSP'}">Aluno IFSP</p></div></div>
+        <div class="seller-score-box"><small>Como foi sua experiência geral com o vendedor?</small><fieldset class="star-rating seller-stars" aria-label="Nota do vendedor">
+          <input id="seller-star-5" type="radio" name="nota" value="5" required><label for="seller-star-5">★</label><input id="seller-star-4" type="radio" name="nota" value="4"><label for="seller-star-4">★</label><input id="seller-star-3" type="radio" name="nota" value="3"><label for="seller-star-3">★</label><input id="seller-star-2" type="radio" name="nota" value="2"><label for="seller-star-2">★</label><input id="seller-star-1" type="radio" name="nota" value="1"><label for="seller-star-1">★</label>
+        </fieldset></div>
+        <div class="seller-product-box" th:if="${item != null}"><small>Produto vendido:</small><div><img th:if="${item.produto.fotoUrl != null}" th:src="@{${item.produto.fotoUrl}}" alt=""><span th:unless="${item.produto.fotoUrl != null}">Produto</span><p><strong th:text="${item.produto.nome}">Bolo de chocolate</strong><small th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario,1,2,'COMMA') + ' • ' + item.quantidade + ' unidade(s)'}">R$ 12,00</small></p></div></div>
+        <p class="seller-average">Avaliação média do vendedor: <strong th:text="${mediaVendedor > 0 ? #numbers.formatDecimal(mediaVendedor,1,1) + ' ★' : 'Ainda sem avaliações'}">Ainda sem avaliações</strong></p>
+      </section>
+      <section class="seller-rating-form"><h2>Como foi sua compra?</h2><p>Avalie a experiência com o vendedor.</p><div class="seller-question"><span>▤</span> Comunicação e agilidade no chat de conversa?</div><div class="seller-question"><span>◷</span> Pontualidade combinada na negociação?</div><label class="rating-comment">Conte como foi a experiência…<textarea name="comentario" maxlength="1000" placeholder="Conte como foi o atendimento, a comunicação e a pontualidade."></textarea></label><div class="rating-actions"><a th:href="@{/compras}">Cancelar</a><button type="submit">Enviar avaliação</button></div></section>
+    </form>
+  </main>
+  <footer class="rating-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body></html>

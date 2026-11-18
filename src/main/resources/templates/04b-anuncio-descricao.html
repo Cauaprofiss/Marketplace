@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Descrição do anúncio - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/anuncio-wizard.css}" href="/Assets/css/anuncio-wizard.css">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="wizard-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="wizard-main">
+    <div class="wizard-stepper" style="--progress:49.8%">
+      <div class="wizard-stepper-progress"></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">1</div><span>Início</span></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">2</div><span>Fotos</span></div>
+      <div class="wizard-step is-done"><div class="wizard-step-circle">3</div><span>Categoria</span></div>
+      <div class="wizard-step is-active"><div class="wizard-step-circle">4</div><span>Informações</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">5</div><span>Valor</span></div>
+      <div class="wizard-step"><div class="wizard-step-circle">6</div><span>Publicar</span></div>
+    </div>
+
+    <div class="wizard-heading">
+      <h1>Criar descrição e informações adicionais</h1>
+      <p>Detalhes objetivos deixam a negociação mais transparente.</p>
+    </div>
+
+    <form class="wizard-flow-form" method="post" th:action="@{/anuncios/novo/descricao}">
+      <input type="hidden" name="idProduto" th:value="${idProduto}">
+      <section class="wizard-card wizard-description-card">
+        <div th:if="${erro}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+        <div class="description-layout">
+          <div class="description-main-column">
+            <h2>Descrição e informações</h2>
+            <p class="wizard-intro">Conte o essencial para quem está pensando em comprar.</p>
+
+            <div class="wizard-field description-field">
+              <label for="descricao">Descrição</label>
+              <textarea class="wizard-textarea" id="descricao" name="descricao" maxlength="250" data-character-limit required
+                        th:text="${anuncio.descricao}"
+                        placeholder="Bolo caseiro com cobertura de brigadeiro.&#10;Feito sob encomenda e entregue no intervalo."></textarea>
+              <div class="wizard-field-footer"><small class="wizard-help">Fotos claras, descrição objetiva e preço visível facilitam a compra.</small><small class="character-counter" data-character-counter-for="descricao"><span data-remaining>250</span> caracteres restantes</small></div>
+            </div>
+
+            <div class="description-details-row">
+              <div class="wizard-field">
+                <label for="quantidade">Quantidade disponível</label>
+                <input class="wizard-input" id="quantidade" name="quantidade" type="number" min="1" step="1" required
+                        th:value="${anuncio.quantidade != null and anuncio.quantidade > 0 ? anuncio.quantidade : ''}"
+                        placeholder="Ex.: 1">
+              </div>
+              <div class="wizard-field">
+                <label for="localRetirada">Local de retirada</label>
+                <select class="wizard-select" id="localRetirada" name="localRetirada" required>
+                  <option value="patio_interno" th:selected="${anuncio.localRetirada == null or anuncio.localRetirada.name() == 'patio_interno'}">Bloco A</option>
+                  <option value="patio_externo" th:selected="${anuncio.localRetirada != null and anuncio.localRetirada.name() == 'patio_externo'}">Bloco B</option>
+                  <option value="quadra" th:selected="${anuncio.localRetirada != null and anuncio.localRetirada.name() == 'quadra'}">Quadra</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <aside class="description-tip">
+            <span>Dica</span>
+            <h3>Seja objetivo.</h3>
+            <p>Diga o que é o produto, o que está incluso, quando ele fica disponível e onde a retirada pode ser combinada no câmpus.</p>
+          </aside>
+        </div>
+      </section>
+      <div class="wizard-actions">
+        <a class="wizard-button wizard-button-secondary" th:href="@{/anuncios/novo/informacoes(idProduto=${idProduto})}">Voltar</a>
+        <button class="wizard-button wizard-button-primary" type="submit">Continuar</button>
+      </div>
+    </form>
+  </main>
+  <footer class="wizard-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+  <script th:src="@{/Assets/JavaScript/character-counter.js}" src="/Assets/JavaScript/character-counter.js"></script>
+</body>
+</html>
+

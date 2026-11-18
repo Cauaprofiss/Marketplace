@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Seu carrinho — Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/carrinho.css(v='20261013-full-image')}" href="/Assets/css/carrinho.css?v=20261013-full-image">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="cart-page" th:classappend="${#lists.isEmpty(itens)} ? ' cart-page-empty' : ' cart-page-filled'">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="cart-main">
+    <nav class="cart-breadcrumb" th:unless="${#lists.isEmpty(itens)}" aria-label="Navegação estrutural"><a th:href="@{/home}">Home</a><span>›</span><a th:href="@{/produtos}">Vitrine virtual</a><span>›</span><strong>Meu carrinho</strong></nav>
+    <header class="cart-heading"><span>Campus Marketplace</span><h1>Seu carrinho</h1><p>Revise os produtos antes de fechar a negociação com o vendedor.</p></header>
+    <div th:if="${erroCarrinho != null}" th:text="${erroCarrinho}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+    <div class="cart-layout">
+      <section class="cart-products" th:if="${!#lists.isEmpty(itens)}" aria-labelledby="selected-items-title">
+        <header class="cart-products-header"><h2 id="selected-items-title">Itens selecionados</h2><form th:action="@{/carrinho/limpar}" method="post"><button type="submit">Limpar carrinho</button></form></header>
+        <div class="cart-items">
+          <article class="cart-item" th:each="item : ${itens}">
+            <button class="cart-item-image open-details-btn" type="button" aria-label="Ver detalhes do produto" th:attr="data-nome=${item.produto.nome},data-descricao=${item.produto.descricao},data-preco=${#numbers.formatDecimal(item.produto.preco,1,2,'COMMA')},data-categoria=${item.produto.categoria != null ? item.produto.categoria.nome : ''},data-foto=${item.produto.fotoUrl}">
+              <img th:if="${item.produto.fotoUrl != null and !#strings.isEmpty(item.produto.fotoUrl)}" th:src="@{${item.produto.fotoUrl}}" th:alt="${item.produto.nome}">
+              <svg th:unless="${item.produto.fotoUrl != null and !#strings.isEmpty(item.produto.fotoUrl)}" viewBox="0 0 64 64" aria-hidden="true"><rect x="5" y="8" width="54" height="48" rx="8"/><circle cx="23" cy="25" r="6"/><path d="m11 48 14-14 10 9 7-7 11 12"/></svg>
+            </button>
+            <div class="cart-item-copy">
+              <span class="cart-category" th:text="${item.produto.categoria != null ? item.produto.categoria.nome : 'Produto'}">Eletrônicos</span>
+              <button class="cart-item-name open-details-btn" type="button" th:attr="data-nome=${item.produto.nome},data-descricao=${item.produto.descricao},data-preco=${#numbers.formatDecimal(item.produto.preco,1,2,'COMMA')},data-categoria=${item.produto.categoria != null ? item.produto.categoria.nome : ''},data-foto=${item.produto.fotoUrl}" th:text="${item.produto.nome}">Nome do produto</button>
+              <p class="cart-item-meta"><span></span><b th:text="${item.produto.usuario != null ? item.produto.usuario.nome : 'Aluno IFSP'}">Aluno IFSP</b><i>·</i><b th:text="${item.produto.localRetirada != null ? 'Retirada: ' + #strings.replace(item.produto.localRetirada.name(),'_',' ') : 'Retirada a combinar'}">Retirada a combinar</b></p>
+              <div class="cart-item-links">
+                <form th:if="${item.produto.usuario != null}" th:action="@{/conversas/iniciar}" method="post"><input type="hidden" name="idUsuario" th:value="${item.produto.usuario.idUsuario}"><input type="hidden" name="idProduto" th:value="${item.produto.idProduto}"><button type="submit">Enviar mensagem</button></form>
+                <form th:action="@{/carrinho/remover}" method="post"><input type="hidden" name="idItemCarrinho" th:value="${item.idItemCarrinho}"><button type="submit">Remover</button></form>
+              </div>
+            </div>
+            <div class="cart-item-purchase">
+              <form class="cart-quantity" th:action="@{/carrinho/atualizar}" method="post" data-quantity-form><input type="hidden" name="idItemCarrinho" th:value="${item.idItemCarrinho}"><button type="button" data-quantity-change="-1" aria-label="Diminuir quantidade">−</button><input type="number" name="quantidade" min="0" th:value="${item.quantidade}" aria-label="Quantidade"><button type="button" data-quantity-change="1" aria-label="Aumentar quantidade">+</button></form>
+              <strong th:text="${'R$ ' + #numbers.formatDecimal(item.produto.preco * item.quantidade,1,2,'COMMA')}">R$ 0,00</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="cart-empty-state" th:if="${#lists.isEmpty(itens)}"><img src="/Assets/Ilustracoes/carrinho-vazio.svg" alt="Pessoa ao lado de um carrinho vazio"><h2>Seu carrinho está vazio</h2><p>Ainda não há nenhum produto aqui.<br>Explore a vitrine e encontre algo do câmpus.</p></section>
+      <aside class="cart-summary" aria-labelledby="summary-title">
+        <h2 id="summary-title">Resumo do pedido</h2><div class="cart-total"><span>Total</span><strong th:text="${'R$ ' + #numbers.formatDecimal(total,1,2,'COMMA')}">R$ 0,00</strong></div>
+        <a class="cart-checkout" th:href="${#lists.isEmpty(itens)} ? @{/produtos} : @{/checkout}">Finalizar compra</a><a class="cart-continue" th:href="@{/produtos}">Continuar comprando</a>
+        <p class="cart-summary-note"><span>•</span><b>Compra entre estudantes.</b> Combine pagamento e retirada com segurança dentro do câmpus.</p>
+      </aside>
+    </div>
+  </main>
+  <footer class="cart-footer"><span>Campus Marketplace · IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <div class="cart-modal-backdrop" id="detailsModal" aria-hidden="true"><section class="cart-modal" role="dialog" aria-modal="true" aria-labelledby="detailsNome"><button class="cart-modal-close" type="button" id="closeDetailsModal" aria-label="Fechar">×</button><div class="cart-modal-image" id="detailsImg"><svg id="detailsImgFallback" viewBox="0 0 64 64" aria-hidden="true"><rect x="5" y="8" width="54" height="48" rx="8"/><circle cx="23" cy="25" r="6"/><path d="m11 48 14-14 10 9 7-7 11 12"/></svg></div><span class="cart-modal-tag" id="detailsCategoria"></span><h2 id="detailsNome"></h2><p id="detailsDescricao"></p><strong id="detailsPreco"></strong></section></div>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script><script th:src="@{/Assets/JavaScript/carrinho.js(v='20260923-figma-cart-1')}" src="/Assets/JavaScript/carrinho.js?v=20260923-figma-cart-1"></script>
+</body>
+</html>
+

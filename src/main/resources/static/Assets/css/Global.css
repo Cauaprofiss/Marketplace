@@ -1,0 +1,51 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* CORES DO PROJETO */
+
+  --VermelhoCampus: #A92E26;
+  --VerdeCampus: #205944;
+  --BrancoCampus: #F7F6F2;
+  --PretoCampus:#1a1a1a;
+  --CinzaCampus:#D5D2C6;
+  --CinzaCampus2: #696963;
+  --FonteFatFrank:'FatFrank';
+  --FontePoppinsBold: 'PoppinsBold';
+  --FontePoppinsRegular:'PoppinsRegular';
+  --FontePoppinsMedium:'PoppinsMedium';
+  --FontePoppinsSemiBold:'PoppinsSemiBold'
+   
+}
+
+       /* TIPOGRAFIAS */
+@font-face {
+    font-family: 'FatFrank';
+    src: url('/Assets/Tipografias/fonnts.com-FatFrank_Heavy.otf') format('opentype');
+}
+
+
+@font-face {
+    font-family: 'PoppinsBold';
+    src: url('/Assets/Tipografias/Poppins-Bold.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'PoppinsRegular';
+    src: url('/Assets/Tipografias/Poppins-Regular.otf') format('opentype');
+}
+
+
+@font-face {
+    font-family: 'PoppinsMedium';
+    src: url('/Assets/Tipografias/Poppins-Medium.otf') format('opentype');
+}
+
+
+@font-face {
+    font-family: 'PoppinsSemiBold';
+    src: url('/Assets/Tipografias/Poppins-SemiBold.otf') format('opentype');
+}

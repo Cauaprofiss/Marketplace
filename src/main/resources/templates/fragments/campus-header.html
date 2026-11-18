@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="campusHeader">
+  <header class="site-header" id="inicio">
+    <div class="header-inner">
+      <a class="brand" th:href="@{/home}" href="/home" aria-label="Campus MarketPlace - início">
+        <small>Campus</small>
+        <strong>MarketPlace</strong>
+      </a>
+
+      <form class="header-search" th:action="@{/produtos}" action="/produtos" method="get" role="search">
+        <nav aria-label="Navegação principal">
+          <a class="active" th:href="@{/home}" href="/home">Home</a>
+          <a th:href="@{/produtos}" href="/produtos">Vitrine virtual</a>
+          <a th:href="@{/home} + '#comunidade'" href="/home#comunidade">Sobre</a>
+        </nav>
+        <label>
+          <span class="sr-only">Buscar no campus</span>
+          <input type="search" name="busca" placeholder="Buscar no campus" autocomplete="off">
+          <button type="button" aria-label="Expandir busca" aria-expanded="false" data-search-toggle>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m16 16 4.2 4.2"/></svg>
+          </button>
+        </label>
+      </form>
+
+      <div class="header-actions">
+        <span class="welcome" th:text="${session.usuarioLogado != null ? 'Bem-vindo(a), ' + session.usuarioLogado.nome : 'Bem-vindo(a)'}">Bem-vindo(a)</span>
+        <a class="icon-button cart-button" th:href="@{/carrinho}" href="/carrinho" aria-label="Abrir carrinho">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M0.17 0.25h3.25l3.25 13h11.91l3.25-9.75H4.5M8.83 19.75a1.083 1.083 0 1 1-2.166 0 1.083 1.083 0 0 1 2.166 0Zm10.834 0a1.083 1.083 0 1 1-2.166 0 1.083 1.083 0 0 1 2.166 0Z"/>
+          </svg>
+          <span class="cart-badge"
+                th:if="${quantidadeCarrinho != null and quantidadeCarrinho > 0}"
+                th:text="${quantidadeCarrinho}">0</span>
+        </a>
+        <button class="icon-button notification-button" type="button" aria-label="Notificações" aria-expanded="false" data-notifications>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21.75h6M2 17.25h18l-2.25-3.3v-7.2a6.75 6.75 0 0 0-13.5 0v7.2L2 17.25Z"/></svg>
+          <span class="notification-badge"
+                th:if="${quantidadeNotificacoesNaoLidas != null and quantidadeNotificacoesNaoLidas > 0}"
+                th:text="${quantidadeNotificacoesNaoLidas}">0</span>
+        </button>
+        <button class="profile-button" type="button" aria-label="Abrir menu do perfil" aria-expanded="false" data-profile-toggle>
+          <img class="profile-illustration" src="/Assets/Icones/perfil-f.svg" alt="">
+        </button>
+      </div>
+
+      <aside class="profile-popover" role="dialog" aria-labelledby="profile-menu-name" aria-hidden="true">
+        <div class="profile-menu-header">
+          <a class="profile-menu-avatar" th:href="@{/perfil}" href="/perfil" aria-label="Ir para Minha conta" title="Minha conta" th:text="${session.usuarioLogado != null and session.usuarioLogado.nome != null ? #strings.substring(session.usuarioLogado.nome,0,1) + (session.usuarioLogado.sobrenome != null and !session.usuarioLogado.sobrenome.isEmpty() ? #strings.substring(session.usuarioLogado.sobrenome,0,1) : '') : 'AL'}">AL</a>
+          <div class="profile-menu-identity">
+            <strong id="profile-menu-name" th:text="${session.usuarioLogado != null ? session.usuarioLogado.nome + (session.usuarioLogado.sobrenome != null and !session.usuarioLogado.sobrenome.isEmpty() ? ' ' + session.usuarioLogado.sobrenome : '') : 'Aluno'}">Aluno</strong>
+            <small th:text="${session.usuarioLogado != null and session.usuarioLogado.turma != null ? session.usuarioLogado.turma.nomeTurma : ''}"></small>
+          </div>
+          <button class="profile-menu-close" type="button" aria-label="Fechar menu do perfil" data-profile-close><img src="/Assets/Icones/perfil-menu/close.svg" alt=""></button>
+        </div>
+        <nav class="profile-menu-links" aria-label="Menu do perfil">
+          <a th:href="@{/anuncios}" href="/anuncios"><img src="/Assets/Icones/perfil-menu/chart.svg" alt=""><span>Meus anúncios</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+          <a th:href="@{/compras}" href="/compras"><img src="/Assets/Icones/perfil-menu/store.svg" alt=""><span>Meus Pedidos</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+          <a th:href="@{/vendas}" href="/vendas"><img src="/Assets/Icones/perfil-menu/chart.svg" alt=""><span>Gestão de vendas</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+          <a th:href="@{/conversas}" href="/conversas"><img src="/Assets/Icones/perfil-menu/chat.svg" alt=""><span>Conversas</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+          <a th:href="@{/agendamentos}" href="/agendamentos"><img src="/Assets/Icones/perfil-menu/calendar.svg" alt=""><span>Agendamentos</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+          <a th:href="@{/perfil}" href="/perfil"><img src="/Assets/Icones/perfil-menu/user.svg" alt=""><span>Minha conta</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+          <a th:href="@{/favoritos}" href="/favoritos"><img src="/Assets/Icones/perfil-menu/heart.svg" alt=""><span>Favoritos</span><img class="profile-menu-chevron" src="/Assets/Icones/perfil-menu/chevron-right.svg" alt=""></a>
+        </nav>
+        <div class="profile-menu-divider"></div>
+        <button class="profile-report" type="button" title="Página ainda não implementada"><img src="/Assets/Icones/perfil-menu/flag.svg" alt=""><span>Minhas denúncias</span></button>
+        <a class="profile-create" th:href="@{/anuncios/novo}" href="/anuncios/novo"><img src="/Assets/Icones/perfil-menu/package-white.svg" alt=""><span>Criar Anúncio</span></a>
+        <button class="profile-logout" type="button" data-logout-open><img src="/Assets/Icones/perfil-menu/logout.svg" alt=""><span>Sair da conta</span></button>
+      </aside>
+
+      <div class="notification-popover" role="dialog" aria-labelledby="notification-title" aria-hidden="true">
+        <div class="notification-header"><strong id="notification-title">Notificações</strong><button class="notification-close" type="button" aria-label="Fechar notificações" data-notifications-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="notification-empty" data-notification-empty th:classappend="${notificacoes != null and !#lists.isEmpty(notificacoes)} ? ' is-hidden' : ''">
+          <img class="notification-illustration-space" src="/Assets/Icones/notificacao-vazia.svg" alt="Pessoa segurando um quadro de avisos">
+          <h2>Tudo em dia</h2>
+          <p>Você não possui novas notificações.<br>Quando algo acontecer, avisaremos por aqui.</p>
+          <a class="notification-return" th:href="@{/produtos}" href="/produtos">Voltar à vitrine</a>
+        </div>
+        <div class="notification-list" data-notification-list th:classappend="${notificacoes == null or #lists.isEmpty(notificacoes)} ? ' is-hidden' : ''">
+          <div class="notification-list-scroll">
+          <article class="notification-entry" data-notification-entry th:each="notificacao : ${notificacoes}" th:classappend="${notificacao.lida} ? ' read' : ' unread'">
+            <a class="notification-entry-link" th:href="@{/notificacoes/{id}/abrir(id=${notificacao.idNotificacao})}">
+            <span class="notification-entry-icon" th:switch="${notificacao.tipoExibicao.name()}" aria-hidden="true">
+              <svg th:case="'mensagem'" viewBox="0 0 24 24"><path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v6a3.5 3.5 0 0 1-3.5 3.5H10l-4.5 3v-3.6A3.5 3.5 0 0 1 5 12.5z"/><path d="M8 8h8M8 11h5"/></svg>
+              <svg th:case="'pedido'" viewBox="0 0 24 24"><path d="m12 3 7 4-7 4-7-4 7-4Z"/><path d="m5 7 7 4 7-4v9l-7 4-7-4V7Z"/><path d="M12 11v9"/></svg>
+              <svg th:case="'pagamento'" viewBox="0 0 24 24"><path d="m12 3 7 4-7 4-7-4 7-4Z"/><path d="m5 7 7 4 7-4v9l-7 4-7-4V7Z"/><path d="M12 11v9"/></svg>
+              <svg th:case="'venda'" viewBox="0 0 24 24"><path d="M5 8h14l1 12H4L5 8Z"/><path d="M8 8a4 4 0 0 1 8 0"/></svg>
+              <svg th:case="'agendamento'" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+              <svg th:case="'anuncio'" viewBox="0 0 24 24"><path d="m12 3 7 4-7 4-7-4 7-4Z"/><path d="m5 7 7 4 7-4v9l-7 4-7-4V7Z"/></svg>
+              <svg th:case="'denuncia'" viewBox="0 0 24 24"><path d="M6 21V4M6 5h11l-2 4 2 4H6"/></svg>
+              <svg th:case="*" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            </span>
+            <span class="notification-entry-copy"><strong th:text="${notificacao.titulo}">Nova mensagem</strong><p th:text="${notificacao.mensagem}">Ana respondeu sobre sua retirada.</p></span>
+            </a>
+            <button class="notification-entry-remove" type="button" aria-label="Limpar esta notificação" data-notification-remove th:data-delete-url="@{/notificacoes/{id}(id=${notificacao.idNotificacao})}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+          </article>
+          </div>
+          <button class="notification-all" type="button" data-notifications-clear th:data-clear-url="@{/notificacoes}">Limpar</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="logout-modal-overlay" data-logout-modal aria-hidden="true">
+    <section class="logout-modal" role="dialog" aria-modal="true" aria-labelledby="logout-modal-title">
+      <div class="logout-modal-topbar"><span class="logout-modal-info" aria-hidden="true">i</span><button class="logout-modal-close" type="button" aria-label="Fechar confirmação" data-logout-close>×</button></div>
+      <h2 id="logout-modal-title">Sair da sua conta?</h2>
+      <p>Você poderá entrar novamente com seu e-mail institucional e sua senha.</p>
+      <div class="logout-modal-actions"><a class="logout-confirm" th:href="@{/logout}" href="/logout">Sair da conta</a><button class="logout-cancel" type="button" data-logout-cancel>Continuar conectado</button></div>
+    </section>
+  </div>
+</th:block>
+</body>
+</html>

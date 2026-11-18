@@ -1,0 +1,326 @@
+@import url(/Assets/css/Global.css);
+
+body {
+    display: flex;
+    flex-direction: row;
+}
+
+/* TELA ESQUERDA */
+
+.TelaLado__esquerda {
+    height: 100vh;
+    width: 880px;
+    background-color: var(--BrancoCampus);
+}
+
+.Area__Logomarca {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 40px;
+    animation: fadeSlideDown 0.7s ease-out both;
+}
+
+.Logo {
+    height: 96px;
+    width: 96px;
+}
+
+.Logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Titulo__login {
+    font-size: 36px;
+    font-family: var(--FontePoppinsBold);
+    color: var(--VerdeCampus);
+}
+
+.Formulario__login {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    height: 650px; /* Mantido fixo e original */
+    width: 582px;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.Area__textoEntrar {
+    width: 288px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: var(--VerdeCampus);
+    margin-bottom: 10px;
+    animation: fadeSlideDown 0.7s ease-out both;
+    animation-delay: 0.15s;
+}
+
+.TituloSecundario__login {
+    display: flex;
+    font-family: var(--FontePoppinsSemiBold);
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.TituloTerciario__login {
+    font-size: 18px;
+    color: #696963;
+    font-family: var(--FontePoppinsRegular);
+}
+
+/* HIERARQUIA DE CAMADAS (Z-INDEX): Igual à tela de cadastro, a linha de cima sobrepõe a de baixo */
+.Area__email {
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.3s;
+    position: relative;
+    z-index: 5; /* Garante que o balão passe por cima do label de senha */
+}
+
+.Area__senha {
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.42s;
+    position: relative;
+    z-index: 4;
+}
+
+.Area__email, .Area__senha {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.Area__email label, .Area__senha label {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: var(--VerdeCampus);
+    font-family: var(--FontePoppinsBold);
+}
+
+/* CONTAINER RELATIVO DO BALÃO */
+.campo-relativo {
+    position: relative;
+    width: 100%;
+}
+
+/* BALÃO DE ALERTA: Absoluto, white-space e z-index igual ao da tela de cadastro para sobrepor */
+.balao-alerta {
+    display: none;
+    position: absolute;
+    top: 100%; 
+    left: 15px;
+    margin-top: 4px;
+    background-color: #ffffff;
+    border: 1px solid var(--VermelhoCampus);
+    color: var(--VermelhoCampus);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: var(--FontePoppinsRegular);
+    white-space: nowrap;
+    z-index: 99999 !important; /* Passa por cima de qualquer elemento inferior */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+    align-items: center;
+}
+
+.balao-alerta::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 15px;
+    border-width: 0 5px 6px 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--VermelhoCampus) transparent;
+}
+
+.balao-alerta::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 16px;
+    border-width: 0 4px 5px 4px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+/* CAIXA DE INPUT */
+.flex__iconInput {
+    height: 77px;
+    border: 1px solid var(--CinzaCampus);
+    border-radius: 15px;
+    padding-left: 22px;
+    padding-right: 22px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s ease;
+}
+
+.flex__iconInput:focus-within {
+    border-color: var(--PretoCampus);
+}
+
+.flex__iconInput.input-erro {
+    border-color: var(--VermelhoCampus) !important;
+}
+
+.icone {
+    width: 22px;
+    color: var(--PretoCampus);
+}
+
+#ImgSenha {
+    cursor: pointer;
+}
+
+.Area__email input, .Area__senha input {
+    width: 85%;
+    border: none;
+    outline: none;
+    font-family: var(--FontePoppinsRegular);
+    color: var(--PretoCampus);
+    background: transparent;
+}
+
+.Area__email input::placeholder, .Area__senha input::placeholder {
+    color: var(--CinzaCampus2);
+    font-family: var(--FontePoppinsRegular);
+}
+
+#Mensagem__erroSenhaLogin {
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.54s;
+}
+
+.Flex__containerErro {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Erros {
+    font-size: 14px;
+    color: var(--VermelhoCampus);
+    font-family: var(--FontePoppinsRegular);
+}
+
+.Esqueci__senha {
+    display: flex;
+    justify-content: end;
+    text-decoration: none;
+    color: var(--PretoCampus);
+    margin-bottom: 18px;
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.54s;
+    margin-left: auto;
+}
+
+.Esqueci__senha a {
+    text-decoration: none;
+    color: var(--PretoCampus);
+    font-size: 16px;
+    font-family: var(--FontePoppinsRegular);
+}
+
+.NaoPossuiConta {
+    display: flex;
+    justify-content: center;
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.72s;
+    font-family: var(--FontePoppinsRegular);
+    color: var(--PretoCampus);
+}
+
+.NaoPossuiConta a {
+    color: var(--VermelhoCampus);
+    font-family: var(--FontePoppinsBold);
+    font-size: 16px;
+    margin-left: 4px;
+}
+
+.Botao__entrar {
+    height: 64px;
+    background-color: var(--VerdeCampus);
+    color: var(--BrancoCampus);
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-family: var(--FontePoppinsBold);
+    margin-bottom: 18px;
+    animation: fadeSlideLeft 0.6s ease-out both;
+    animation-delay: 0.66s;
+    cursor: pointer;
+}
+
+.Botao__entrar:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.08);
+    box-shadow: 0 8px 20px var(--CinzaCampus2);
+}
+
+.Botao__entrar:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--PretoCampus);
+}
+
+/* TELA DIREITA */
+
+.TelaLado__direita {
+    height: 100vh;
+    width: 1040px;
+    background-image: url('/Assets/Logos/Fundo\ lado\ Direito.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 98px;
+}
+
+.AreaTexto_principal, .AreaTexto_secundario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--BrancoCampus);
+}
+
+.AreaTexto_principal {
+    width: 462px;
+    height: 290px;
+    gap: 12px;
+    animation: fadeSlideRight 0.7s ease-out both;
+    animation-delay: 0.3s;
+}
+
+.AreaTexto_principal p {
+    font-size: 62px;
+    font-weight: bolder;
+    font-family: var(--FonteFatFrank);
+}
+
+.AreaTexto_secundario {
+    width: 374px;
+    height: 74px;
+    gap: 18px;
+    animation: fadeSlideRight 0.7s ease-out both;
+    animation-delay: 0.5s;
+    font-family: var(--FontePoppinsRegular);
+}
+
+.AreaTexto_secundario p {
+    font-size: 16px;
+    font-weight: lighter;
+}
+
+/* ANIMAÇÕES MANTIDAS */
+@keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeSlideLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeSlideRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }

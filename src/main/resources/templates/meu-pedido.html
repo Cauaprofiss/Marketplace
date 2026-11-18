@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script src="/Assets/JavaScript/feedback.js?v=20261013-3" th:src="@{/Assets/JavaScript/feedback.js(v='20261013-3')}" defer></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Acompanhar pedido - Campus MarketPlace</title>
+  <link rel="stylesheet" th:href="@{/Assets/css/home.css(v='20261103-profile-identity-size-2')}" href="/Assets/css/home.css?v=20261103-profile-identity-size-2">
+  <link rel="stylesheet" th:href="@{/Assets/css/pedidos.css(v='20260923-2')}" href="/Assets/css/pedidos.css?v=20260923-2">
+  <link rel="stylesheet" href="/Assets/css/feedback.css?v=20261013-3" th:href="@{/Assets/css/feedback.css(v='20261013-3')}">
+  <link rel="stylesheet" href="/Assets/css/product-photo-background.css?v=20261014-1" th:href="@{/Assets/css/product-photo-background.css(v='20261014-1')}">
+  <script src="/Assets/JavaScript/product-photo-background.js?v=20261014-1" th:src="@{/Assets/JavaScript/product-photo-background.js(v='20261014-1')}" defer></script>
+</head>
+<body class="orders-page">
+  <th:block th:replace="~{fragments/campus-header :: campusHeader}"></th:block>
+  <main class="orders-main tracking-main">
+    <header class="tracking-heading"><small>Campus Marketplace</small><h1>Acompanhar pedido</h1><p><strong th:text="${'Pedido #' + pedido.codigo}">Pedido #CM-2051</strong> • Veja o andamento da negociação e confirme quando receber seu produto.</p></header>
+    <span class="today-badge" th:if="${pedido.retiradaHoje}"><i></i> Retirada combinada para hoje</span>
+    <div th:if="${sucesso != null}" th:text="${sucesso}" class="campus-notice" data-campus-notice hidden role="status"></div><div th:if="${erro != null}" th:text="${erro}" class="campus-notice campus-notice--error" data-campus-notice hidden role="alert"></div>
+    <div class="tracking-layout">
+      <aside class="tracking-product-card">
+        <div class="tracking-seller"><span th:text="${pedido.vendedor != null ? #strings.substring(pedido.vendedor.nome,0,1) : 'V'}">AS</span><div><h2 th:text="${pedido.vendedor != null ? pedido.vendedor.nome : 'Vendedor'}">Ana Souza</h2><p>Vendedor • disponível no campus</p></div><b><i></i> Ativo</b></div>
+        <div class="tracking-product-image"><img th:if="${pedido.produto != null and pedido.produto.fotoUrl != null}" th:src="@{${pedido.produto.fotoUrl}}" alt=""><span th:unless="${pedido.produto != null and pedido.produto.fotoUrl != null}">Produto</span></div>
+        <h2 class="tracking-product-name" th:text="${pedido.produto != null ? pedido.produto.nome : 'Produto'}">Bolo de chocolate</h2><strong class="tracking-product-price" th:text="${pedido.produto != null ? 'R$ ' + #numbers.formatDecimal(pedido.produto.preco,1,2,'COMMA') + ' • ' + pedido.quantidade + ' unidade(s)' : pedido.quantidade + ' unidade(s)'}">R$ 12,00 • 1 unidade</strong>
+        <div class="tracking-product-meta"><p><b>Local</b><span th:text="${pedido.localRetirada != null ? pedido.localRetirada + ', ' + pedido.disponibilidadeRetirada : 'A combinar'}">Pátio externo</span></p><p><b>Pagamento</b><span th:text="${pedido.formaPagamento}">Pagamento presencial</span></p></div>
+        <form class="tracking-chat-form" th:if="${pedido.vendedor != null}" th:action="@{/conversas/iniciar}" method="post">
+          <input type="hidden" name="idUsuario" th:value="${pedido.vendedor.idUsuario}">
+          <input type="hidden" name="idProduto" th:if="${pedido.produto != null}" th:value="${pedido.produto.idProduto}">
+          <button class="tracking-chat" type="submit">Conversar com o vendedor</button>
+        </form>
+      </aside>
+      <section class="tracking-status-card">
+        <div class="tracking-safety"><span>!</span><p><strong>Combine a retirada em local visível do câmpus</strong><small>Depois de receber o produto, toque em confirmar entrega para finalizar o pedido com segurança.</small></p><form th:if="${!pedido.entregue and !pedido.cancelado}" th:action="@{/compras/{id}/reportar-problema(id=${pedido.idPedido})}" method="post"><input type="hidden" name="motivo" value="Produto não recebido no encontro combinado"><button class="outline" type="submit">Reportar problema</button></form><form th:if="${!pedido.entregue and !pedido.cancelado and !pedido.confirmadoComprador}" th:action="@{/compras/{id}/confirmar-entrega(id=${pedido.idPedido})}" method="post"><button type="submit">Confirmar entrega</button></form></div>
+        <div class="tracking-status-heading"><div><h2>Status da negociação</h2><p>O pedido foi criado e a retirada foi combinada. Confirme a entrega depois de receber o produto.</p></div><span th:if="${pedido.dataRetirada != null}"><small>Próximo passo</small><strong th:text="${#temporals.format(pedido.dataRetirada,'HH:mm') + ' • ' + (pedido.localRetirada != null ? pedido.localRetirada : 'Câmpus')}">9:40 • Pátio</strong></span></div>
+        <div class="tracking-progress"><i class="done"></i><i th:classappend="${pedido.retirado} ? ' done'"></i><i th:classappend="${pedido.pagamentoConfirmado} ? ' done'"></i><i th:classappend="${pedido.entregue} ? ' done'"></i></div>
+        <ol class="tracking-timeline">
+          <li class="done"><span>✓</span><div><h3>Pedido criado</h3><p>Seu pedido foi enviado ao vendedor.</p></div><b th:text="${pedido.dataCriacao != null ? #temporals.format(pedido.dataCriacao,'dd/MM/yyyy') : 'Registrado'}">Registrado</b></li>
+          <li th:classappend="${pedido.retirado} ? ' done'"><span th:text="${pedido.retirado ? '✓' : '2'}">2</span><div><h3>Retirada combinada</h3><p>Encontro confirmado no intervalo com o vendedor.</p></div><b th:text="${pedido.localRetirada != null and pedido.dataRetirada != null ? pedido.localRetirada + ' • ' + #temporals.format(pedido.dataRetirada,'HH:mm') : 'Aguardando'}">Pátio externo • 9:40</b></li>
+          <li th:classappend="${pedido.pagamentoConfirmado} ? ' done'"><span th:text="${pedido.pagamentoConfirmado ? '✓' : '3'}">3</span><div><h3>Pagamento confirmado</h3><p th:text="${pedido.formaPagamento}">Pagamento presencial</p></div><b th:text="${pedido.pagamentoConfirmado ? 'Confirmado' : 'Aguardando confirmação'}">Aguardando confirmação</b></li>
+          <li th:classappend="${pedido.entregue} ? ' done'"><span th:text="${pedido.entregue ? '✓' : '4'}">4</span><div><h3>Produto entregue</h3><p>Confirme quando receber o produto.</p></div><b th:text="${pedido.entregue ? 'Entrega concluída' : (pedido.confirmadoComprador ? 'Aguardando o vendedor' : 'Aguardando confirmação')}">Aguardando confirmação</b></li>
+        </ol>
+        <div class="tracking-finished" th:if="${pedido.entregue}"><a th:href="@{/compras/{id}/avaliar-vendedor(id=${pedido.idPedido})}">Avaliar vendedor</a><a th:href="@{/compras/{id}/avaliar(id=${pedido.idPedido})}">Avaliar produto</a></div>
+      </section>
+    </div>
+  </main>
+  <footer class="orders-footer"><span>Campus Marketplace • IFSP São Miguel Paulista</span><span>© 2026</span></footer>
+  <script th:src="@{/Assets/JavaScript/campus-header.js(v='20261025-search-click-1')}" src="/Assets/JavaScript/campus-header.js?v=20261025-search-click-1"></script>
+</body></html>

@@ -9,6 +9,7 @@ import com.br.ifsp.pji.marketplace.model.Turma;
 import com.br.ifsp.pji.marketplace.repository.TurmaRepository;
 
 @Service
+// Reune as operacoes de negocio relacionadas as turmas academicas.
 public class TurmaService {
 
     @Autowired
